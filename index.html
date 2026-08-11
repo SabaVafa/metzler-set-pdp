@@ -320,9 +320,9 @@
     <ol>
       <li><a href="#">Home</a></li>
       <li aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
-      <li><a href="#">Sprechanlagen</a></li>
+      <li><a href="#">Sets</a></li>
       <li aria-hidden="true"><svg><use href="#i-chevron-right"/></svg></li>
-      <li><span aria-current="page">Metzler VDM10 2.0</span></li>
+      <li><span aria-current="page">Türklingel „Stella" &amp; Briefkasten „Siebert"</span></li>
     </ol>
   </div>
 </nav>
@@ -336,7 +336,7 @@
       <!-- Product header – title · rating · share (precedes the image on mobile) -->
       <header class="pdp-hero__head">
         <p class="pdp-eyebrow">Metzler · Aufeinander abgestimmtes Set</p>
-        <h1 class="pdp-title set-title">Türklingel&nbsp;„Stella" <span class="set-title__amp" aria-hidden="true">&amp;</span> Briefkasten&nbsp;„Siebert"</h1>
+        <h1 class="pdp-title set-title">Metzler Türklingel mit Gravur + LED-Taster <span class="set-title__amp">&amp;</span> Briefkasten aus hochwertigem Stahl | Anthrazit</h1>
         <div class="bx-cred">
           <a href="#bewertungen" class="pdp-rate bx-cred__rate" aria-label="4,5 von 5">
             <span class="pdp-stars" aria-hidden="true">
@@ -362,61 +362,26 @@
         </div>
       </header>
 
-      <!-- LEFT · Media -->
+      <!-- LEFT · Media – same frame/stage + thumbnail strip + lightbox as the single
+           product PDP. Main shot is the premium bundle image (Stella + Siebert composed
+           from the real product photos); thumbnails carry the individual product views.
+           Driven by gallery.js (pdp-b.js is omitted on the set page). -->
       <div class="pdp-media">
         <div class="pdp-media__stage">
-          <div class="pdp-media__toggle" role="group" aria-label="Ansicht wählen">
-            <button type="button" aria-pressed="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              Fotos
-            </button>
-            <button type="button" aria-pressed="false">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
-              3D
-            </button>
-          </div>
           <img class="pdp-media__img" id="pdpMainImg"
-               src="Product Image/Sprechanlage/video-station.png"
-               alt="Metzler VDM10 2.0 Video-Türsprechanlage Colson in Anthrazit" />
-          <span class="pdp-media__engrave" id="bEngrave"></span>
+               src="Bundled Product/Image/BundleImage.png"
+               alt="Set aus Metzler Türklingel „Stella" und Briefkasten „Siebert" im abgestimmten Anthrazit-Farbton" />
         </div>
 
         <ul class="pdp-thumbs" id="pdpThumbs" aria-label="Weitere Ansichten">
-          <li><button type="button" aria-current="true"><img src="Product Image/Sprechanlage/video-station.png" alt="Türstation Frontansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/touch-display-station.png" alt="Innenstation Touch-Display"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/innenstation.png" alt="Innenstation"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/audio-station-namensschild.png" alt="Namensschild mit Gravur"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/briefkasten-paketbox.png" alt="Kombination mit Briefkasten"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/bus-xdm10.png" alt="Anschluss / BUS"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~6.webp" alt="VDM10 Detailansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~11.webp" alt="VDM10 Kamera Detail"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~13.webp" alt="VDM10 Seitenansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~19.webp" alt="VDM10 Montage"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~24.webp" alt="VDM10 an der Wand"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~28.webp" alt="VDM10 Nachtansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~29.webp" alt="VDM10 Klingeltaster"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~32.webp" alt="VDM10 Lieferumfang"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/audio-station.png" alt="Audio-Station"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Innenstation/metzler-intercom-innenstation-ultra-10-zoll-touchscreen-lan-poe-schwarz.webp" alt="Innenstation Ultra"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/mehrfamilien-anlage.png" alt="Mehrfamilien-Anlage"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/zubehoer.png" alt="Zubehör"></button></li>
-          <!-- additional views (prototype: reuse existing shots to demo a larger gallery) -->
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~6.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~11.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~13.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~19.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~24.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~28.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~29.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Slider/metzler-vdm10-20-video-tuersprechanlage-1-klingeltaster-colson~32.webp" alt="VDM10 Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/video-station.png" alt="Türstation Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/touch-display-station.png" alt="Touch-Display Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/innenstation.png" alt="Innenstation Ansicht"></button></li>
-          <li><button type="button" aria-current="false"><img src="Product Image/Sprechanlage/audio-station.png" alt="Audio-Station Ansicht"></button></li>
+          <li><button type="button" aria-current="true"><img src="Bundled Product/Image/BundleImage.png" alt="Set – Türklingel „Stella" und Briefkasten „Siebert""></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp" alt="Türklingel „Stella" mit Gravur und LED-Taster"></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp" alt="Briefkasten „Siebert" aus hochwertigem Stahl"></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert~4.webp" alt="Briefkasten „Siebert" – Detailansicht"></button></li>
         </ul>
-        <button type="button" class="pdp-thumbs__all" id="pdpThumbsAll" hidden aria-haspopup="dialog" aria-controls="pdpLightbox">
+        <button type="button" class="pdp-thumbs__all" id="pdpThumbsAll" aria-haspopup="dialog" aria-controls="pdpLightbox">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          <span>Alle <span id="pdpThumbsCount">30</span> Bilder ansehen</span>
+          <span>Alle <span id="pdpThumbsCount">4</span> Bilder ansehen</span>
         </button>
       </div>
 
@@ -427,6 +392,10 @@
              specs/price/colour/configurator/buy block. Same PDP shell + components;
              only the configuration flow is the set version. Rendered by set.js. ===== -->
         <div class="setcfg">
+          <!-- Guided stepper: persistent status across the 4 configuration steps.
+               Leads the eye and enables jump-to-section without blocking anything;
+               completion + current step update live (scroll-spy). -->
+          <nav class="setsteps" id="setSteps" aria-label="Konfiguration – Schritte"></nav>
           <section class="setfin" id="setfin" aria-label="Set-Farbe wählen"></section>
           <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
           <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
@@ -1278,10 +1247,10 @@
 <!-- ===== STICKY PURCHASE BAR (reveals on scroll past the hero CTA) ===== -->
 <div class="pdp-stickybar" id="pdpStickyBar" aria-hidden="true">
   <div class="container pdp-stickybar__inner">
-    <img class="pdp-stickybar__thumb" id="pdpStickyThumb" src="Product Image/Sprechanlage/video-station.png" alt="" aria-hidden="true">
+    <img class="pdp-stickybar__thumb" id="pdpStickyThumb" src="Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp" alt="" aria-hidden="true">
     <div class="pdp-stickybar__info">
-      <span class="pdp-stickybar__name">Metzler VDM10 2.0 | Colson · <span id="pdpStickyFinish">Anthrazit RAL 7016</span></span>
-      <span class="pdp-stickybar__price" id="bStickyPrice">ab <b>699,00 €</b></span>
+      <span class="pdp-stickybar__name">Set „Stella" &amp; „Siebert" · <span id="pdpStickyFinish">Farbe wählen</span></span>
+      <span class="pdp-stickybar__price" id="bStickyPrice">ab <b>91,33 €</b></span>
     </div>
     <button type="button" class="pdp-stickybar__details" id="bStickyDetails" aria-haspopup="dialog" aria-controls="bSheet">
       <span>Details</span>
@@ -1594,5 +1563,7 @@
      the set configuration flow is driven by set.js. Non-config PDP sections
      (gallery, tech accordions) render statically in this prototype. -->
 <script src="set.js?v=1"></script>
+<script src="gallery.js?v=1"></script>
+<script src="reviews.js?v=1"></script>
 </body>
 </html>
