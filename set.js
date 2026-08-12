@@ -315,7 +315,7 @@
       '</div>' +
       '<div class="setsum__total"><div class="setsum__totl"><span class="setsum__totcap">Gesamt</span><span class="setsum__totvat">inkl. MwSt.</span></div>' +
         '<div class="setsum__totr">' + (ready ? '<span class="setsum__totwas">' + eur(sub) + '</span>' : '') + '<b id="setTotal" class="setsum__totnow">' + eur(total) + '</b></div></div>' +
-      '<button type="button" class="setsum__cta' + (ready ? ' is-ready' : '') + '"' + (ready ? '' : ' aria-disabled="true"') + '>' + (ready ? cart + 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
+      '<button type="button" class="setsum__cta is-ready" data-addcart>' + (ready ? cart + 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
       '</div>' +
       '<div class="bx-delivery setsum__delivery" aria-label="Versand und Lieferung">' +
         '<div class="bx-delivery__row"><span class="bx-delivery__key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Versanddatum</span><span class="bx-delivery__val"><b class="ph">TT.MM. – TT.MM.</b></span></div>' +
@@ -386,6 +386,7 @@
     if (tab) { showStep(tab.getAttribute('data-step'), true); return; }
     if (e.target.closest('[data-wiznext]')) { showStep(STEPS[Math.min(stepIndex(currentStepId) + 1, STEPS.length - 1)].id, true); return; }
     if (e.target.closest('[data-wizprev]')) { showStep(STEPS[Math.max(stepIndex(currentStepId) - 1, 0)].id, true); return; }
+    if (e.target.closest('[data-addcart]')) { addSetToCart(); return; }
   });
 
   /* ---- bottom sticky price bar (from the single-product PDP): reveals once the
@@ -395,8 +396,22 @@
     if (fin) { var f = !state.diverged && byId(state.finishA); fin.textContent = f ? finishLabel(f) : 'Farbe wählen'; }
     var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
     var pr = document.getElementById('bStickyPrice'); if (pr) pr.innerHTML = (ready ? 'Set · ' : 'ab ') + '<b>' + eur(total) + '</b>';
-    var lbl = document.getElementById('pdpStickyLabel'); if (lbl) lbl.textContent = ready ? 'In den Warenkorb' : 'Set-Farbe wählen';
+    var lbl = document.getElementById('pdpStickyLabel'); if (lbl) lbl.textContent = ready ? 'In den Warenkorb' : 'Bitte Set-Farbe wählen';
     var cta = document.getElementById('pdpStickyCta'); if (cta) cta.setAttribute('data-mode', ready ? 'cart' : 'color');
+  }
+  /* CTA: always live, validate on click (single-product PDP logic) – missing colour
+     surfaces at the swatches; otherwise the set is added to the cart. */
+  function addSetToCart() {
+    if (!bothChosen()) {
+      var sw = document.getElementById('setfinSwatches');
+      if (sw) { sw.classList.remove('is-invalid'); void sw.offsetWidth; sw.classList.add('is-invalid'); }
+      var s = document.getElementById('setfin');
+      if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); }
+      return;
+    }
+    var badge = document.querySelector('.header .icon-btn[aria-label="Warenkorb"] .badge') || document.querySelector('.header .badge');
+    if (badge) badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
   }
   function setupSticky() {
     var bar = document.getElementById('pdpStickyBar'), anchor = document.querySelector('.setwiz'); if (!bar || !anchor) return;
@@ -407,15 +422,25 @@
     window.addEventListener('scroll', reveal, { passive: true });
     window.addEventListener('resize', reveal, { passive: true });
     reveal();
-    var cta = document.getElementById('pdpStickyCta');
-    if (cta) cta.addEventListener('click', function () {
-      if (!bothChosen()) { var s = document.getElementById('setfin'); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); } }
-      else { showStep('setsum', true); }
-    });
+    var cta = document.getElementById('pdpStickyCta'); if (cta) cta.addEventListener('click', addSetToCart);
     var det = document.getElementById('bStickyDetails'); if (det) det.addEventListener('click', function () { showStep('setsum', true); });
+  }
+  /* sticky progress bar: keep the dock pinned flush under the (variable-height) site
+     header while the configurator card is in view; flag pinned for the elevation. */
+  function setupStickyDock() {
+    var dock = document.getElementById('setSteps'), header = document.querySelector('.header'), wiz = document.querySelector('.setwiz');
+    if (!dock || !wiz) return;
+    var update = function () {
+      var h = header ? Math.round(header.getBoundingClientRect().height) : 88;
+      document.documentElement.style.setProperty('--set-dock-top', h + 'px');
+      var top = dock.getBoundingClientRect().top;
+      dock.classList.toggle('is-pinned', Math.abs(top - h) <= 1.5 && wiz.getBoundingClientRect().bottom > h + dock.offsetHeight);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
   }
 
   function refresh() { refreshLead(); refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky(); }
-  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky();
+  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky(); setupStickyDock();
 })();

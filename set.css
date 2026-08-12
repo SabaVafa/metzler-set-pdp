@@ -14,9 +14,15 @@
 /* ---- one cohesive configurator card (integrity): the .cfgb-dock chevron ribbon +
    step title are the card HEADER band; the active step is the card BODY. No nested,
    floating boxes — dock, title and content read as a single unit. ---- */
-.setwiz { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); overflow: hidden;
+.setwiz { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg);
   box-shadow: 0 1px 2px rgba(16,24,32,0.04), 0 14px 30px -22px rgba(16,24,32,0.22); }
-.setwiz .cfgb-dock { position: static; padding-top: 0; border: 0; border-bottom: 1px solid var(--color-graphite-200); border-radius: 0; box-shadow: none; }
+/* sticky progress bar: the dock pins below the site header while the configurator
+   is in view (single-product PDP behaviour); the dock clips its own ribbon so the
+   card no longer needs overflow:hidden (which would break sticky). */
+.setwiz .cfgb-dock { position: sticky; top: var(--set-dock-top, 5.5rem); z-index: 5; padding-top: 0;
+  border: 0; border-bottom: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden;
+  box-shadow: none; transition: box-shadow .2s ease; }
+.setwiz .cfgb-dock.is-pinned { box-shadow: 0 10px 18px -12px rgba(10,20,20,0.28); }
 .setwiz .cfgb-dock__title { padding-top: 0.1rem; }
 .setwiz__stage { padding: 1.4rem 1.45rem 1.55rem; }
 /* the active step flows as the card body – strip each step's own card chrome */
