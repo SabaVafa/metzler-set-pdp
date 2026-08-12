@@ -136,6 +136,9 @@
 .setwiz__next:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
 /* back link above the Übersicht summary */
 .setsum__back { margin-bottom: 0.85rem; }
+/* single-product price panel inside the set summary */
+.setsum .pdp-price--lead { margin-top: 1.15rem; }
+.setsum .setsum__cta { margin-top: 1.1rem; }
 
 /* separate-finish (divergence) block */
 .setprod__sep { margin: 1rem 0 0.4rem; padding: 0.85rem 1rem; background: var(--color-paper); border: 1px dashed var(--color-graphite-300); border-radius: var(--radius-lg); }

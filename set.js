@@ -285,13 +285,29 @@
         '<span class="setsum__iprice">' + eur(productTotal(k)) + '</span></div>';
     }).join('');
   }
+  /* lead price panel at the top of the buy column (single-product PDP position) */
+  function refreshLead() {
+    var el = document.getElementById('setLead'); if (!el) return;
+    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
+    el.innerHTML = '<div class="pdp-price pdp-price--lead">' +
+      (ready ? '<span class="pdp-offer"><b class="pdp-offer__pct">−10&nbsp;%</b><span class="pdp-offer__dur">Set-Vorteil</span></span>' : '') +
+      (ready ? '<span class="cfgb-price__label">Preis wie konfiguriert</span>' : '') +
+      '<div class="pdp-price__row">' +
+        (ready ? '' : '<span class="pdp-price__from">ab</span>') +
+        '<b class="pdp-price__amount" aria-live="polite">' + eur(total) + '</b>' +
+        (ready ? '<s class="pdp-price__was" aria-label="Regulärer Preis">' + eur(sub) + '</s>' : '') +
+      '</div>' +
+      '<p class="pdp-price__meta">inkl. 19% USt. · <a href="#">Versandkostenfreie Lieferung</a></p>' +
+      '<div class="pdp-avail"><span class="pdp-avail__status">Sofort verfügbar</span></div>' +
+    '</div>';
+  }
   function refreshSummary() {
     var el = document.getElementById('setsum');
     var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
     var cart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>';
     el.innerHTML = '<button type="button" class="setwiz__back setsum__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Zurück zum Briefkasten</button>' +
       '<div class="setsum__card">' +
-      '<div class="setsum__head"><h2 class="setsum__title">Ihr Set</h2><span class="setsum__badge">−10 % Set-Vorteil</span></div>' +
+      '<h2 class="setsum__title">Ihr Set</h2>' +
       '<div class="setsum__items">' + lineItems() + '</div>' +
       '<div class="setsum__rows">' +
         '<div class="setsum__row"><span>Zwischensumme</span><span>' + eur(sub) + '</span></div>' +
@@ -299,7 +315,6 @@
       '</div>' +
       '<div class="setsum__total"><div class="setsum__totl"><span class="setsum__totcap">Gesamt</span><span class="setsum__totvat">inkl. MwSt.</span></div>' +
         '<div class="setsum__totr">' + (ready ? '<span class="setsum__totwas">' + eur(sub) + '</span>' : '') + '<b id="setTotal" class="setsum__totnow">' + eur(total) + '</b></div></div>' +
-      (ready ? '<p class="setsum__save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Sie sparen <b>' + eur(disc) + '</b> im Set</p>' : '') +
       '<button type="button" class="setsum__cta' + (ready ? ' is-ready' : '') + '"' + (ready ? '' : ' aria-disabled="true"') + '>' + (ready ? cart + 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
       '</div>' +
       '<div class="bx-delivery setsum__delivery" aria-label="Versand und Lieferung">' +
@@ -317,14 +332,17 @@
     { id: 'setsum', label: 'Übersicht', flag: 'Zusammenfassung', opt: true }
   ];
   var currentStepId = 'prodA';
+  var maxReached = 0;                        /* furthest step reached (single-product model) */
   function stepIndex(id) { for (var i = 0; i < STEPS.length; i++) if (STEPS[i].id === id) return i; return 0; }
   function paintSteps() {
     var cur = stepIndex(currentStepId);
+    /* on the last step, once the set is complete it reads as done (not "current") */
+    var lastDone = cur === STEPS.length - 1 && bothChosen();
     STEPS.forEach(function (s, i) {
       var b = document.querySelector('#setSteps .cfgb-bar__step[data-step="' + s.id + '"]'); if (!b) return;
-      b.classList.toggle('is-current', i === cur);
-      b.classList.toggle('is-filled', i < cur);                 /* passed steps read as done */
-      b.setAttribute('aria-current', i === cur ? 'step' : 'false');
+      b.classList.toggle('is-filled', i <= maxReached);        /* every reached step stays done, incl. current */
+      b.classList.toggle('is-current', i === cur && !lastDone);/* is-current overrides is-filled in the CSS */
+      if (i === cur) b.setAttribute('aria-current', 'step'); else b.setAttribute('aria-current', 'false');
     });
     var s = STEPS[cur];
     var n = document.getElementById('setStepN'); if (n) n.textContent = 'Schritt ' + (cur + 1) + ' von ' + STEPS.length;
@@ -334,6 +352,7 @@
   function showStep(id, scroll) {
     if (stepIndex(id) < 0) id = 'prodA';
     currentStepId = id;
+    maxReached = Math.max(maxReached, stepIndex(id));
     ['prodA', 'prodB', 'setsum'].forEach(function (sid) { var n = document.getElementById(sid); if (n) n.hidden = (sid !== id); });
     paintSteps();
     if (scroll) { var dock = document.getElementById('setSteps'); if (dock && dock.scrollIntoView) dock.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -397,6 +416,6 @@
     var det = document.getElementById('bStickyDetails'); if (det) det.addEventListener('click', function () { showStep('setsum', true); });
   }
 
-  function refresh() { refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky(); }
+  function refresh() { refreshLead(); refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky(); }
   renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky();
 })();
