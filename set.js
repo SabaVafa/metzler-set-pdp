@@ -304,7 +304,6 @@
   function refreshSummary() {
     var el = document.getElementById('setsum');
     var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
-    var cart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>';
     el.innerHTML = '<button type="button" class="setwiz__back setsum__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Zurück zum Briefkasten</button>' +
       '<div class="setsum__card">' +
       '<h2 class="setsum__title">Ihr Set</h2>' +
@@ -315,7 +314,7 @@
       '</div>' +
       '<div class="setsum__total"><div class="setsum__totl"><span class="setsum__totcap">Gesamt</span><span class="setsum__totvat">inkl. MwSt.</span></div>' +
         '<div class="setsum__totr">' + (ready ? '<span class="setsum__totwas">' + eur(sub) + '</span>' : '') + '<b id="setTotal" class="setsum__totnow">' + eur(total) + '</b></div></div>' +
-      '<button type="button" class="setsum__cta is-ready" data-addcart>' + (ready ? cart + 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
+      '<button type="button" class="setsum__cta is-ready" data-addcart>' + (ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
       '</div>' +
       '<div class="bx-delivery setsum__delivery" aria-label="Versand und Lieferung">' +
         '<div class="bx-delivery__row"><span class="bx-delivery__key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Versanddatum</span><span class="bx-delivery__val"><b class="ph">TT.MM. – TT.MM.</b></span></div>' +
