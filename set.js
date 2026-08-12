@@ -135,7 +135,7 @@
     var list = win.querySelector('.colorwin__list');
     if (list) list.innerHTML = SHARED.map(function (f) {
       return '<button type="button" class="colorwin__row" role="option" aria-selected="false" data-fin="' + f.id + '">' +
-        '<span class="colorwin__sw"><img src="' + f.img + '" alt=""></span>' +
+        '<span class="colorwin__sw"><img src="' + (f.mat ? 'assets/materials/' + f.mat : f.img) + '" alt=""></span>' +
         '<span class="colorwin__text"><span class="colorwin__name">' + esc(f.name) + '</span>' + (f.code ? '<span class="colorwin__code">' + f.code + '</span>' : '') + '</span>' +
         '<span class="colorwin__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>';
     }).join('');
