@@ -107,6 +107,31 @@
 .setprod__pricecap { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-graphite-500); }
 .setprod__price b { font-size: 1.25rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
 
+/* per-product configurator: the single-product .stepr accordion (styling from
+   pdp-b.css); here we only space it. */
+.setprod__steps { margin-top: 1.25rem; }
+
+/* ---- horizontal wizard: one step visible at a time ---- */
+.setcfg .setprod[hidden], .setcfg .setsum[hidden] { display: none !important; }
+/* product-level nav footer (Zurück · running total · Weiter) */
+.setwiz__nav { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setwiz__spacer { flex: 0 0 auto; }
+.setwiz__total { flex: 1 1 auto; min-width: 0; font-size: 0.8125rem; color: var(--color-graphite-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.setwiz__total b { color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
+.setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-graphite-700);
+  background: none; border: 0; padding: 0.55rem 0.2rem; cursor: pointer; transition: color .16s; }
+.setwiz__back svg { width: 1.05rem; height: 1.05rem; }
+.setwiz__back:hover { color: var(--color-teal); }
+.setwiz__next { flex: none; display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-size: 0.9375rem; font-weight: 700; color: #fff;
+  background: var(--color-teal); border: 0; border-radius: var(--radius); padding: 0.7rem 1.25rem; cursor: pointer;
+  box-shadow: 0 0.5rem 1.1rem rgba(1,82,83,0.18); transition: background .16s, box-shadow .16s, transform .12s; }
+.setwiz__next::after { content: "→"; font-weight: 400; }
+.setwiz__next:hover { background: var(--color-teal-600); box-shadow: 0 0.6rem 1.3rem rgba(1,82,83,0.24); }
+.setwiz__next:active { transform: translateY(1px); }
+.setwiz__next:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+/* back link above the Übersicht summary */
+.setsum__back { margin-bottom: 0.85rem; }
+
 /* separate-finish (divergence) block */
 .setprod__sep { margin: 1rem 0 0.4rem; padding: 0.85rem 1rem; background: var(--color-paper); border: 1px dashed var(--color-graphite-300); border-radius: var(--radius-lg); }
 .setprod__seplbl { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-graphite-600); }
@@ -179,8 +204,20 @@
 .pdp-b .pdp-media__img { width: 100%; height: auto; max-width: 100%; max-height: none; border-radius: var(--radius-xl); }
 .pdp-b .pdp-media__stage:hover .pdp-media__img { transform: none; }
 
-/* the single-product "Alle Farben" link is flow-b-gated; surface it in the set rail */
-.setfin .bx-color__listlink { display: inline-flex; align-self: flex-start; }
+/* v4 (flow-d) opener: the boxed "Alle Farben mit Bezeichnung ansehen" field with a
+   selected-finish thumbnail (ported from the working folder, scoped to the set rail). */
+.setfin .bx-listfield { display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.7rem 0.85rem; text-align: left; font: inherit; cursor: pointer;
+  background: var(--color-white); border: 1px solid var(--color-graphite-300); border-radius: var(--radius-lg);
+  transition: border-color .18s cubic-bezier(.22,1,.36,1), box-shadow .18s cubic-bezier(.22,1,.36,1); }
+.setfin .bx-listfield:hover { border-color: var(--color-teal); box-shadow: 0 1px 2px rgba(26,23,27,0.06); }
+.setfin .bx-listfield:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+.setfin .bx-listfield__icon { flex: none; width: 1.15rem; height: 1.15rem; color: var(--color-teal); }
+.setfin .bx-listfield__text { flex: 0 1 auto; min-width: 0; font-size: 0.9375rem; font-weight: 700; color: var(--color-digital-black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.setfin .bx-listfield__thumb { flex: none; width: 1.85rem; height: 1.85rem; box-sizing: border-box; border-radius: var(--radius); overflow: hidden; background: var(--color-paper); border: 1px solid var(--color-graphite-200); }
+.setfin .bx-listfield__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.setfin .bx-listfield__thumb:empty { display: none; }
+.setfin .bx-listfield__chev { flex: none; margin-left: auto; width: 1.15rem; height: 1.15rem; color: var(--color-graphite-500); transition: transform .18s cubic-bezier(.22,1,.36,1), color .18s ease; }
+.setfin .bx-listfield:hover .bx-listfield__chev { color: var(--color-teal); transform: translateX(0.125rem); }
 
 /* ---- finish rail swatches: color-fill tile + "bricht das Set" badge ----
    The rail reuses the single-product .bx-swatches / .pdp-swatch component; these
@@ -198,6 +235,25 @@
 /* divergence mini-swatches sit in a flex row (no grid track) – give the reused
    .pdp-swatch tile an explicit footprint so its edge-to-edge image resolves */
 .pdp-b .setprod__sepgrid .pdp-swatch { width: 2.75rem; }
+
+/* ---- v4 material-texture swatches (grabbed from the single-product working folder).
+   Each finish renders its actual surface (a square WebP) as the tile background; the
+   selected tile gets the RAL-picker's proven language: teal ring + a filled check. ---- */
+.pdp-b .pdp-swatch--mat { position: relative; aspect-ratio: 1; width: 100%; height: auto; box-sizing: border-box; overflow: hidden; padding: 0;
+  border: 1px solid var(--color-graphite-300); border-radius: var(--radius);
+  background-repeat: no-repeat; background-size: cover; background-position: center; }
+.pdp-b .pdp-swatch--mat img { display: none; }
+.pdp-b .pdp-swatch--mat:hover { border-color: var(--color-graphite-400); }
+.pdp-b .pdp-swatch--mat[aria-pressed="true"] { border-width: 2px; border-color: var(--color-teal); outline: 2px solid var(--color-teal); outline-offset: 2px; }
+.pdp-b .setprod__sepgrid .pdp-swatch--mat { width: 2.75rem; }
+/* filled check badge on the chosen material tile */
+.pdp-swatch__check { position: absolute; top: 0.3rem; right: 0.3rem; z-index: 3; width: 1rem; height: 1rem; display: none; place-items: center;
+  background: var(--color-teal); color: var(--color-white); border-radius: 50%; box-shadow: 0 0 0 2px var(--color-white), 0 1px 3px rgba(26,23,27,0.35); }
+.pdp-swatch__check svg { width: 0.66rem; height: 0.66rem; }
+.pdp-swatch[aria-pressed="true"] .pdp-swatch__check { display: grid; }
+
+/* the independent colour section: a standalone Ausführung block above the config flow */
+.setfin { margin-bottom: 0.25rem; }
 
 /* ---- summary · premium set price panel ----
    A calm, confident checkout card: product line items with thumbnails + finish

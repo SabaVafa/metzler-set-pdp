@@ -13,12 +13,12 @@
   var SET_DISCOUNT = 0.10;   // 10% – MVP default
 
   var FINISHES = [
-    { id: 'ral7016', name: 'Anthrazitgrau',      code: 'RAL 7016', img: 'assets/swatches/anthrazit-ral7016.jpg',   a: true, b: true },
-    { id: 'ral9016', name: 'Verkehrsweiß',       code: 'RAL 9016', img: 'assets/swatches/verkehrsweiss-ral9016.jpg', a: true, b: true },
-    { id: 'ral9007', name: 'Graualuminium',      code: 'RAL 9007', img: 'assets/swatches/graualuminium-ral9007.jpg', a: true, b: true },
-    { id: 'db703',   name: 'Eisenglimmer',       code: 'DB 703',   img: 'assets/swatches/eisenglimmer-db703.jpg',   a: true, b: true },
-    { id: 'ral9005', name: 'Tiefschwarz',        code: 'RAL 9005', img: 'assets/swatches/tiefschwarz-ral9005.jpg',  a: true, b: true },
-    { id: 'edelstahl', name: 'Edelstahl gebürstet', code: '',      img: 'assets/swatches/edelstahl-gebuerstet.jpg', a: true, b: true },
+    { id: 'ral7016', name: 'Anthrazitgrau',      code: 'RAL 7016', img: 'assets/swatches/anthrazit-ral7016.jpg',   mat: 'anthrazit.webp',      a: true, b: true },
+    { id: 'ral9016', name: 'Verkehrsweiß',       code: 'RAL 9016', img: 'assets/swatches/verkehrsweiss-ral9016.jpg', mat: 'verkehrsweiss.webp',  a: true, b: true },
+    { id: 'ral9007', name: 'Graualuminium',      code: 'RAL 9007', img: 'assets/swatches/graualuminium-ral9007.jpg', mat: 'graualuminium.webp',  a: true, b: true },
+    { id: 'db703',   name: 'Eisenglimmer',       code: 'DB 703',   img: 'assets/swatches/eisenglimmer-db703.jpg',   mat: 'eisenglimmer.webp',   a: true, b: true },
+    { id: 'ral9005', name: 'Tiefschwarz',        code: 'RAL 9005', img: 'assets/swatches/tiefschwarz-ral9005.jpg',  mat: 'tiefschwarz.webp',    a: true, b: true },
+    { id: 'edelstahl', name: 'Edelstahl gebürstet', code: '',      img: 'assets/swatches/edelstahl-gebuerstet.jpg', mat: 'edelstahl.webp',      a: true, b: true },
     { id: 'ral7012', name: 'Basaltgrau',         code: 'RAL 7012', chip: '#4c5155', a: false, b: true },
     { id: 'wunsch',  name: 'Wunschfarbe nach RAL', code: '',       img: 'assets/swatches/wunschfarbe-nach-ral.jpg', a: false, b: true }
   ];
@@ -68,15 +68,19 @@
   }
   function railTile(f, attr, solo) {
     var label = finishLabel(f);
-    return '<button type="button" class="pdp-swatch' + (solo ? ' pdp-swatch--solo' : '') + '" ' + attr + '="' + f.id + '"' +
+    var mat = f.mat ? " style=\"background-image:url('assets/materials/" + f.mat + "')\"" : '';
+    var inner = f.mat ? '' : swatchInner(f);   /* v4: material texture as the tile background, no photo */
+    return '<button type="button" class="pdp-swatch' + (f.mat ? ' pdp-swatch--mat' : '') + (solo ? ' pdp-swatch--solo' : '') + '" ' + attr + '="' + f.id + '"' + mat +
       ' aria-pressed="false" aria-label="' + esc(label) + (solo ? ' – nur für den Briefkasten, bricht das Set' : '') + '" title="' + esc(label) + '">' +
-      swatchInner(f) + (solo ? '<span class="pdp-swatch__break">bricht das Set</span>' : '') + '</button>';
+      inner +
+      '<span class="pdp-swatch__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>' +
+      (solo ? '<span class="pdp-swatch__break">bricht das Set</span>' : '') + '</button>';
   }
   function renderRail() {
     var el = document.getElementById('setfin');
     var swatches = SHARED.map(function (f) { return railTile(f, 'data-fin', false); }).join('');
     el.innerHTML =
-      '<div class="setfin__head"><span class="setfin__cap">Schritt 1 · Set-Farbe</span>' +
+      '<div class="setfin__head"><span class="setfin__cap">Ausführung · Set-Farbe</span>' +
       '<h2 class="setfin__title">Ein Farbton für beide Produkte</h2>' +
       '<p class="setfin__sub">Diese <b>' + SHARED.length + ' Töne</b> sind für Türklingel und Briefkasten abgestimmt.</p></div>' +
       '<div class="bx-color">' +
@@ -84,9 +88,11 @@
         '<div class="pdp-swatches bx-swatches" id="setfinSwatches" role="group" aria-label="Set-Farbe wählen – ein Farbton für beide Produkte">' +
           '<span class="bx-swline" aria-hidden="true"></span>' + swatches +
         '</div>' +
-        '<button type="button" class="bx-color__listlink" id="setfinListLink" aria-haspopup="dialog" aria-expanded="false" aria-controls="colorwin">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>' +
-          'Alle Farben mit Bezeichnung ansehen' +
+        '<button type="button" class="bx-listfield" id="setfinListLink" aria-haspopup="dialog" aria-expanded="false" aria-controls="colorwin">' +
+          '<svg class="bx-listfield__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>' +
+          '<span class="bx-listfield__text">Alle Farben mit Bezeichnung ansehen</span>' +
+          '<span class="bx-listfield__thumb" id="setfinListThumb" aria-hidden="true"></span>' +
+          '<svg class="bx-listfield__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>' +
         '</button>' +
         '<p class="bx-color__note">Der gewählte Farbton gilt für <b>beide Produkte</b> des Sets – Türklingel und Briefkasten werden im selben Ton gefertigt.</p>' +
       '</div>';
@@ -165,61 +171,82 @@
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     restoreName();
+    var thumb = document.getElementById('setfinListThumb');
+    if (thumb) { var f = !state.diverged && byId(state.finishA); thumb.innerHTML = (f && f.mat) ? '<img src="assets/materials/' + f.mat + '" alt="">' : ''; }
     syncColorwin();
   }
 
-  /* ---- product panels ---- */
+  /* ---- product panels · premium .stepr accordion (single-product configurator) ---- */
+  function optPickText(k, o) {
+    if (o.type === 'radio') { var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0];
+      return c ? (c.label + (c.d ? ' · +' + eur(c.d) : ' · inklusive')) : 'Bitte wählen'; }
+    return state[k][o.id] ? '„' + state[k][o.id] + '"' : 'Ohne Gravur';
+  }
+  function optRow(k, o, c) {
+    var price = c.d ? '<span class="cfg-opt__price">+' + eur(c.d) + '</span>' : '<span class="cfg-opt__price is-incl">inklusive</span>';
+    var dot = c.dot ? '<span class="cfg-opt__dot" style="background:' + c.dot + '"></span>' : '';
+    return '<button type="button" class="cfg-opt" role="radio" aria-checked="false" data-opt="' + o.id + '" data-val="' + c.v + '">' +
+      '<span class="cfg-opt__mark"></span><span class="cfg-opt__body"><span class="cfg-opt__name">' + esc(c.label) + '</span></span>' + dot + price + '</button>';
+  }
+  function optBody(k, o) {
+    return o.type === 'radio'
+      ? '<div class="cfg-opts" role="radiogroup" aria-label="' + esc(o.label) + '">' + o.choices.map(function (c) { return optRow(k, o, c); }).join('') + '</div>'
+      : '<div class="cfgb-field is-shown"><input type="text" class="cfg-input" name="' + k + '-' + o.id + '" placeholder="' + esc(o.placeholder || '') + '" value="' + esc(state[k][o.id]) + '" maxlength="24" autocomplete="off"></div>';
+  }
+  function collapseSteps(el) {
+    el.querySelectorAll('.stepr__item').forEach(function (it) { it.classList.remove('is-active'); it.classList.add('is-done');
+      var h = it.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'false'); });
+  }
+  function openStep(item) { if (!item) return; item.classList.add('is-active'); item.classList.remove('is-done');
+    var h = item.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'true'); }
+  function toggleStep(el, item) { var was = item.classList.contains('is-active'); collapseSteps(el); if (!was) openStep(item); }
+  function advanceStep(el, item) { collapseSteps(el); var nx = item && item.nextElementSibling;
+    if (nx && nx.classList.contains('stepr__item')) openStep(nx); }
+
   function renderPanel(k) {
     var p = PRODUCTS[k], el = document.getElementById('prod' + k.toUpperCase());
-    var opts = p.options.map(function (o) {
-      if (o.type === 'radio') {
-        var rows = o.choices.map(function (c) {
-          var price = c.d ? '<span class="cfg-opt__price">+' + eur(c.d) + '</span>' : '<span class="cfg-opt__price is-incl">inklusive</span>';
-          var dot = c.dot ? '<span class="cfg-opt__dot" style="background:' + c.dot + '"></span>' : '';
-          return '<button type="button" class="cfg-opt" role="radio" aria-checked="false" data-opt="' + o.id + '" data-val="' + c.v + '">' +
-            '<span class="cfg-opt__mark"></span>' +
-            '<span class="cfg-opt__body"><span class="cfg-opt__name">' + esc(c.label) + '</span></span>' +
-            dot + price + '</button>';
-        }).join('');
-        return '<div class="setopt"><div class="setopt__lbl"><span class="setopt__name">' + esc(o.label) + '</span></div>' +
-          '<div class="cfg-opts" role="radiogroup" aria-label="' + esc(o.label) + '">' + rows + '</div></div>';
-      }
-      var hint = o.hint ? '<span class="setopt__incl">' + esc(o.hint) + '</span>' : '';
-      return '<div class="setopt"><div class="setopt__lbl"><span class="setopt__name">' + esc(o.label) + '</span>' + hint + '</div>' +
-        '<div class="cfgb-field is-shown"><input type="text" class="cfg-input" name="' + k + '-' + o.id + '" placeholder="' + esc(o.placeholder || '') + '" value="' + esc(state[k][o.id]) + '" maxlength="24" autocomplete="off"></div></div>';
+    var steps = p.options.map(function (o, i) {
+      var incl = (o.type === 'text' && o.hint) ? ' <span class="setopt__incl">' + esc(o.hint) + '</span>' : '';
+      return '<li class="stepr__item' + (i === 0 ? ' is-active' : ' is-done') + '" data-optstep="' + o.id + '">' +
+        '<button class="stepr__head" type="button" aria-expanded="' + (i === 0 ? 'true' : 'false') + '">' +
+          '<span class="stepr__node"><span class="stepr__num">' + (i + 1) + '</span><svg class="stepr__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>' +
+          '<span class="stepr__titles"><span class="stepr__title">' + esc(o.label) + incl + '</span><span class="stepr__pick" id="pick-' + k + '-' + o.id + '"></span></span>' +
+          '<span class="stepr__edit">Ändern</span>' +
+          '<svg class="stepr__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
+        '</button>' +
+        '<div class="stepr__body"><div class="stepr__inner"><div class="stepr__pad">' + optBody(k, o) + '</div></div></div>' +
+      '</li>';
     }).join('');
     var sep = k === 'a' ?
       '<div class="setprod__sep" id="sepA" hidden><span class="setprod__seplbl">Türklingel-Farbe separat wählen</span><div class="setprod__sepgrid">' +
         SHARED.map(function (f) { return railTile(f, 'data-fina', false); }).join('') +
       '</div><button type="button" class="setprod__relink" id="relinkA">Set wieder abstimmen</button></div>' : '';
+    var nav = '<div class="setwiz__nav">' +
+      (k === 'b'
+        ? '<button type="button" class="setwiz__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Türklingel</button>'
+        : '<span class="setwiz__spacer"></span>') +
+      '<span class="setwiz__total" id="wiztotal-' + k + '"></span>' +
+      '<button type="button" class="setwiz__next" data-wiznext>' + (k === 'a' ? 'Weiter zum Briefkasten' : 'Weiter zur Übersicht') + '</button>' +
+      '</div>';
     el.innerHTML =
       '<div class="setprod__inner"><div class="setprod__head"><img class="setprod__img" src="' + p.img + '" alt="' + esc(p.name) + '">' +
       '<div class="setprod__id"><span class="setprod__cap">' + (k === 'a' ? 'Produkt 1' : 'Produkt 2') + '</span>' +
       '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub) + '</p>' +
       '<div class="setprod__finishslot" id="fin' + k + '"></div></div>' +
       '<div class="setprod__price" id="price' + k + '"></div></div>' + sep +
-      '<button type="button" class="setprod__toggle" aria-expanded="true" aria-controls="opts' + k.toUpperCase() + '">' +
-        '<span class="setprod__togglecap">Konfiguration</span>' +
-        '<span class="setprod__togglesum" id="optsum' + k + '"></span>' +
-        '<svg class="setprod__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
-      '</button>' +
-      '<div class="setprod__optswrap" id="opts' + k.toUpperCase() + '"><div class="setprod__opts">' + opts + '</div></div></div>';
+      '<ol class="stepr setprod__steps">' + steps + '</ol>' + nav + '</div>';
     el.addEventListener('change', function (e) { var t = e.target; if (!t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refresh(); });
-    el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refreshSummary(); });
+    el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refreshSummary(); refreshPick(k); });
     el.addEventListener('click', function (e) {
-      if (e.target.closest('[data-golock]')) { var s = document.getElementById('setfin');
-        if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl');
-          setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); } return; }
-      var tg = e.target.closest('.setprod__toggle');
-      if (tg) { var wrap = el.querySelector('.setprod__optswrap'); var exp = tg.getAttribute('aria-expanded') === 'true';
-        tg.setAttribute('aria-expanded', exp ? 'false' : 'true'); if (wrap) wrap.classList.toggle('is-collapsed', exp); return; }
+      var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }
       var opt = e.target.closest('.cfg-opt[data-opt]');
-      if (opt) { state[k][opt.getAttribute('data-opt')] = opt.getAttribute('data-val'); refresh(); }
+      if (opt) { state[k][opt.getAttribute('data-opt')] = opt.getAttribute('data-val'); refresh(); advanceStep(el, opt.closest('.stepr__item')); return; }
+      if (k === 'a') { var s = e.target.closest('[data-fina]'); if (s) { state.finishA = s.getAttribute('data-fina'); refresh(); return; }
+        if (e.target.id === 'relinkA') { state.diverged = false; state.finishA = state.finishB = (byId(state.finishB) && byId(state.finishB).a ? state.finishB : SHARED[0].id); refresh(); } }
     });
-    if (k === 'a') el.addEventListener('click', function (e) {
-      var s = e.target.closest('[data-fina]'); if (s) { state.finishA = s.getAttribute('data-fina'); refresh(); return; }
-      if (e.target.id === 'relinkA') { state.diverged = false; state.finishA = state.finishB = (byId(state.finishB) && byId(state.finishB).a ? state.finishB : SHARED[0].id); refresh(); }
-    });
+  }
+  function refreshPick(k) {
+    PRODUCTS[k].options.forEach(function (o) { var pk = document.getElementById('pick-' + k + '-' + o.id); if (pk) pk.textContent = optPickText(k, o); });
   }
   function refreshPanel(k) {
     var el = document.getElementById('prod' + k.toUpperCase()), f = finishFor(k);
@@ -233,10 +260,7 @@
       var on = state[k][b.getAttribute('data-opt')] === b.getAttribute('data-val');
       b.classList.toggle('is-selected', on); b.setAttribute('aria-checked', on ? 'true' : 'false');
     });
-    var sum = document.getElementById('optsum' + k);
-    if (sum) sum.textContent = PRODUCTS[k].options.filter(function (o) { return o.type === 'radio'; }).map(function (o) {
-      var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0]; return c ? c.label : '';
-    }).filter(Boolean).join(' · ');
+    refreshPick(k);
     if (k === 'a') { var sep = document.getElementById('sepA'); if (sep) sep.hidden = !state.diverged;
       el.querySelectorAll('[data-fina]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-fina') === state.finishA ? 'true' : 'false'); }); }
   }
@@ -265,7 +289,8 @@
     var el = document.getElementById('setsum');
     var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
     var cart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>';
-    el.innerHTML = '<div class="setsum__card">' +
+    el.innerHTML = '<button type="button" class="setwiz__back setsum__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Zurück zum Briefkasten</button>' +
+      '<div class="setsum__card">' +
       '<div class="setsum__head"><h2 class="setsum__title">Ihr Set</h2><span class="setsum__badge">−10 % Set-Vorteil</span></div>' +
       '<div class="setsum__items">' + lineItems() + '</div>' +
       '<div class="setsum__rows">' +
@@ -283,30 +308,36 @@
       '</div>';
   }
 
-  /* ---- guided stepper: the single-product PDP progress component (.cfgb-dock
-     chevron ribbon + is-filled/is-current states + "Schritt X von N" title) ---- */
+  /* ---- horizontal wizard: one step visible at a time; the single-product PDP
+     progress component (.cfgb-dock chevron ribbon) plus "Weiter"/tabs navigate.
+     Steps: Türklingel → Briefkasten → Übersicht. ---- */
   var STEPS = [
-    { id: 'setfin', label: 'Set-Farbe', flag: 'erforderlich', opt: false },
     { id: 'prodA', label: 'Türklingel', flag: 'anpassbar', opt: true },
     { id: 'prodB', label: 'Briefkasten', flag: 'anpassbar', opt: true },
     { id: 'setsum', label: 'Übersicht', flag: 'Zusammenfassung', opt: true }
   ];
-  var currentStepId = 'setfin';
+  var currentStepId = 'prodA';
   function stepIndex(id) { for (var i = 0; i < STEPS.length; i++) if (STEPS[i].id === id) return i; return 0; }
-  function stepDone(id) { return id === 'prodA' ? !!finishFor('a') : id === 'prodB' ? !!finishFor('b') : bothChosen(); }
   function paintSteps() {
-    document.querySelectorAll('#setSteps .cfgb-bar__step').forEach(function (b) {
-      var id = b.getAttribute('data-step'), cur = id === currentStepId;
-      b.classList.toggle('is-current', cur);
-      b.classList.toggle('is-filled', !cur && stepDone(id));
-      b.setAttribute('aria-current', cur ? 'step' : 'false');
+    var cur = stepIndex(currentStepId);
+    STEPS.forEach(function (s, i) {
+      var b = document.querySelector('#setSteps .cfgb-bar__step[data-step="' + s.id + '"]'); if (!b) return;
+      b.classList.toggle('is-current', i === cur);
+      b.classList.toggle('is-filled', i < cur);                 /* passed steps read as done */
+      b.setAttribute('aria-current', i === cur ? 'step' : 'false');
     });
-    var i = stepIndex(currentStepId), s = STEPS[i];
-    var n = document.getElementById('setStepN'); if (n) n.textContent = 'Schritt ' + (i + 1) + ' von ' + STEPS.length;
+    var s = STEPS[cur];
+    var n = document.getElementById('setStepN'); if (n) n.textContent = 'Schritt ' + (cur + 1) + ' von ' + STEPS.length;
     var nm = document.getElementById('setStepName'); if (nm) nm.textContent = s.label;
     var fl = document.getElementById('setStepFlag'); if (fl) { fl.textContent = s.flag; fl.classList.toggle('is-opt', !!s.opt); }
   }
-  function setCurrentStep(id) { currentStepId = id; paintSteps(); }
+  function showStep(id, scroll) {
+    if (stepIndex(id) < 0) id = 'prodA';
+    currentStepId = id;
+    ['prodA', 'prodB', 'setsum'].forEach(function (sid) { var n = document.getElementById(sid); if (n) n.hidden = (sid !== id); });
+    paintSteps();
+    if (scroll) { var dock = document.getElementById('setSteps'); if (dock && dock.scrollIntoView) dock.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
   function renderSteps() {
     var el = document.getElementById('setSteps'); if (!el) return;
     el.className = 'cfgb-dock';
@@ -322,21 +353,22 @@
         '<span class="cfgb-dock__name"><span id="setStepName"></span></span></span>' +
         '<span class="cfgb-dock__flag" id="setStepFlag"></span>' +
       '</div>';
-    el.addEventListener('click', function (e) {
-      var b = e.target.closest('.cfgb-bar__step'); if (!b) return;
-      var id = b.getAttribute('data-step');
-      setCurrentStep(id);
-      var t = document.getElementById(id); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    if (window.IntersectionObserver) {
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { if (en.isIntersecting) setCurrentStep(en.target.id); });
-      }, { rootMargin: '-25% 0px -50% 0px', threshold: 0 });
-      STEPS.forEach(function (s) { var nn = document.getElementById(s.id); if (nn) obs.observe(nn); });
-    }
   }
-  function refreshSteps() { paintSteps(); }
+  function refreshWizTotals() {
+    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
+    ['a', 'b'].forEach(function (k) { var el = document.getElementById('wiztotal-' + k); if (el) el.innerHTML = 'Set gesamt · <b>' + eur(total) + '</b>'; });
+  }
+  function refreshSteps() { paintSteps(); refreshWizTotals(); }
+
+  /* wizard navigation: progress-bar tabs + Weiter/Zurück (delegated on the config column) */
+  var cfgRoot = document.querySelector('.setcfg');
+  if (cfgRoot) cfgRoot.addEventListener('click', function (e) {
+    var tab = e.target.closest('#setSteps .cfgb-bar__step');
+    if (tab) { showStep(tab.getAttribute('data-step'), true); return; }
+    if (e.target.closest('[data-wiznext]')) { showStep(STEPS[Math.min(stepIndex(currentStepId) + 1, STEPS.length - 1)].id, true); return; }
+    if (e.target.closest('[data-wizprev]')) { showStep(STEPS[Math.max(stepIndex(currentStepId) - 1, 0)].id, true); return; }
+  });
 
   function refresh() { refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); }
-  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh();
+  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false);
 })();

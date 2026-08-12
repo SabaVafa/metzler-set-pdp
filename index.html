@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="pdp.css?v=35" />
 <!-- Version B – inline build panel -->
 <link rel="stylesheet" href="pdp-b.css?v=637" />
-<link rel="stylesheet" href="set.css?v=4" />
+<link rel="stylesheet" href="set.css?v=7" />
 <!-- Prototype variant switch – append ?flow=b (v2) or ?flow=c (v3) to load an alternative
      color-selection flow. Default (no param) renders v1 exactly as-is. Runs in <head> so the
      class is set before paint. v2 = "Alle Farben" text link → side window; v3 = a selected-
@@ -336,7 +336,7 @@
       <!-- Product header – title · rating · share (precedes the image on mobile) -->
       <header class="pdp-hero__head">
         <p class="pdp-eyebrow">Metzler · Aufeinander abgestimmtes Set</p>
-        <h1 class="pdp-title set-title">Metzler Türklingel mit Gravur + LED-Taster <span class="set-title__amp">&amp;</span> Briefkasten aus hochwertigem Stahl | Anthrazit</h1>
+        <h1 class="pdp-title set-title">Metzler Türklingel mit Gravur + LED-Taster &amp; Briefkasten aus hochwertigem Stahl | Anthrazit</h1>
         <div class="bx-cred">
           <a href="#bewertungen" class="pdp-rate bx-cred__rate" aria-label="4,5 von 5">
             <span class="pdp-stars" aria-hidden="true">
@@ -392,11 +392,12 @@
              specs/price/colour/configurator/buy block. Same PDP shell + components;
              only the configuration flow is the set version. Rendered by set.js. ===== -->
         <div class="setcfg">
-          <!-- Guided stepper: persistent status across the 4 configuration steps.
-               Leads the eye and enables jump-to-section without blocking anything;
-               completion + current step update live (scroll-spy). -->
-          <nav class="setsteps" id="setSteps" aria-label="Konfiguration – Schritte"></nav>
+          <!-- Set colour is chosen INDEPENDENTLY, above the configuration flow (same
+               approach as the single-product PDP v4): a standalone Ausführung section
+               with material-texture swatches. The guided stepper below then covers the
+               per-product configuration + overview. -->
           <section class="setfin" id="setfin" aria-label="Set-Farbe wählen"></section>
+          <nav class="setsteps" id="setSteps" aria-label="Konfiguration – Schritte"></nav>
           <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
           <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
           <aside class="setsum" id="setsum" aria-label="Set-Zusammenfassung"></aside>
@@ -1562,7 +1563,7 @@
 <!-- pdp-b.js (single-product engine) is intentionally omitted on the set page;
      the set configuration flow is driven by set.js. Non-config PDP sections
      (gallery, tech accordions) render statically in this prototype. -->
-<script src="set.js?v=1"></script>
+<script src="set.js?v=4"></script>
 <script src="gallery.js?v=1"></script>
 <script src="reviews.js?v=1"></script>
 </body>
