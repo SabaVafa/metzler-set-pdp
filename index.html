@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="pdp.css?v=35" />
 <!-- Version B – inline build panel -->
 <link rel="stylesheet" href="pdp-b.css?v=637" />
-<link rel="stylesheet" href="set.css?v=7" />
+<link rel="stylesheet" href="set.css?v=8" />
 <!-- Prototype variant switch – append ?flow=b (v2) or ?flow=c (v3) to load an alternative
      color-selection flow. Default (no param) renders v1 exactly as-is. Runs in <head> so the
      class is set before paint. v2 = "Alle Farben" text link → side window; v3 = a selected-
@@ -397,10 +397,16 @@
                with material-texture swatches. The guided stepper below then covers the
                per-product configuration + overview. -->
           <section class="setfin" id="setfin" aria-label="Set-Farbe wählen"></section>
-          <nav class="setsteps" id="setSteps" aria-label="Konfiguration – Schritte"></nav>
-          <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
-          <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
-          <aside class="setsum" id="setsum" aria-label="Set-Zusammenfassung"></aside>
+          <!-- One cohesive configurator card: the .cfgb-dock progress bar + step title
+               are its header band; the active step is its body (no nested cards). -->
+          <div class="setwiz">
+            <nav id="setSteps" aria-label="Konfiguration – Schritte"></nav>
+            <div class="setwiz__stage">
+              <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
+              <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
+              <aside class="setsum" id="setsum" aria-label="Set-Zusammenfassung"></aside>
+            </div>
+          </div>
         </div>
 
         <!-- ===== FEATURE HIGHLIGHTS – numbered editorial list (below the CTA) ===== -->
@@ -1248,7 +1254,7 @@
 <!-- ===== STICKY PURCHASE BAR (reveals on scroll past the hero CTA) ===== -->
 <div class="pdp-stickybar" id="pdpStickyBar" aria-hidden="true">
   <div class="container pdp-stickybar__inner">
-    <img class="pdp-stickybar__thumb" id="pdpStickyThumb" src="Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp" alt="" aria-hidden="true">
+    <img class="pdp-stickybar__thumb" id="pdpStickyThumb" src="Bundled Product/Image/BundleImage.png" alt="" aria-hidden="true">
     <div class="pdp-stickybar__info">
       <span class="pdp-stickybar__name">Set „Stella" &amp; „Siebert" · <span id="pdpStickyFinish">Farbe wählen</span></span>
       <span class="pdp-stickybar__price" id="bStickyPrice">ab <b>91,33 €</b></span>
@@ -1563,7 +1569,7 @@
 <!-- pdp-b.js (single-product engine) is intentionally omitted on the set page;
      the set configuration flow is driven by set.js. Non-config PDP sections
      (gallery, tech accordions) render statically in this prototype. -->
-<script src="set.js?v=4"></script>
+<script src="set.js?v=5"></script>
 <script src="gallery.js?v=1"></script>
 <script src="reviews.js?v=1"></script>
 </body>

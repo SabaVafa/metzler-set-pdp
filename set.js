@@ -369,6 +369,34 @@
     if (e.target.closest('[data-wizprev]')) { showStep(STEPS[Math.max(stepIndex(currentStepId) - 1, 0)].id, true); return; }
   });
 
-  function refresh() { refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); }
-  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false);
+  /* ---- bottom sticky price bar (from the single-product PDP): reveals once the
+     configurator has scrolled out of view; mirrors the set finish + running total. ---- */
+  function syncSticky() {
+    var fin = document.getElementById('pdpStickyFinish');
+    if (fin) { var f = !state.diverged && byId(state.finishA); fin.textContent = f ? finishLabel(f) : 'Farbe wählen'; }
+    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
+    var pr = document.getElementById('bStickyPrice'); if (pr) pr.innerHTML = (ready ? 'Set · ' : 'ab ') + '<b>' + eur(total) + '</b>';
+    var lbl = document.getElementById('pdpStickyLabel'); if (lbl) lbl.textContent = ready ? 'In den Warenkorb' : 'Set-Farbe wählen';
+    var cta = document.getElementById('pdpStickyCta'); if (cta) cta.setAttribute('data-mode', ready ? 'cart' : 'color');
+  }
+  function setupSticky() {
+    var bar = document.getElementById('pdpStickyBar'), anchor = document.querySelector('.setwiz'); if (!bar || !anchor) return;
+    var reveal = function () {
+      var show = anchor.getBoundingClientRect().bottom <= 8;
+      bar.classList.toggle('is-visible', show); bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    };
+    window.addEventListener('scroll', reveal, { passive: true });
+    window.addEventListener('resize', reveal, { passive: true });
+    reveal();
+    var cta = document.getElementById('pdpStickyCta');
+    if (cta) cta.addEventListener('click', function () {
+      if (!bothChosen()) { var s = document.getElementById('setfin'); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); } }
+      else { showStep('setsum', true); }
+    });
+    var det = document.getElementById('bStickyDetails'); if (det) det.addEventListener('click', function () { showStep('setsum', true); });
+  }
+
+  function refresh() { refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky(); }
+  renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky();
 })();

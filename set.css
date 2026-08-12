@@ -11,13 +11,18 @@
 
 .setcfg { display: flex; flex-direction: column; gap: 1.25rem; }
 
-/* ---- guided stepper: the single-product PDP progress component (.cfgb-dock).
-   Only set-context framing here (sticky + contained card); the chevron ribbon +
-   is-filled/is-current states come verbatim from pdp-b.css. ---- */
-.setcfg .cfgb-dock { position: sticky; top: 5.25rem; z-index: 6; padding-top: 0; overflow: hidden;
-  border: 1px solid var(--color-graphite-200); border-bottom: 1px solid var(--color-graphite-200);
-  border-radius: var(--radius-lg); box-shadow: 0 6px 16px -12px rgba(16,24,32,0.25); }
-.setcfg .cfgb-dock .cfgb-dock__title { padding-top: 0.1rem; }
+/* ---- one cohesive configurator card (integrity): the .cfgb-dock chevron ribbon +
+   step title are the card HEADER band; the active step is the card BODY. No nested,
+   floating boxes — dock, title and content read as a single unit. ---- */
+.setwiz { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: 0 1px 2px rgba(16,24,32,0.04), 0 14px 30px -22px rgba(16,24,32,0.22); }
+.setwiz .cfgb-dock { position: static; padding-top: 0; border: 0; border-bottom: 1px solid var(--color-graphite-200); border-radius: 0; box-shadow: none; }
+.setwiz .cfgb-dock__title { padding-top: 0.1rem; }
+.setwiz__stage { padding: 1.4rem 1.45rem 1.55rem; }
+/* the active step flows as the card body – strip each step's own card chrome */
+.setwiz__stage .setprod { border: 0; border-radius: 0; background: none; padding: 0; }
+.setwiz__stage .setsum__card { border: 0; border-radius: 0; background: none; padding: 0; }
+.setwiz__stage .setsum__delivery { margin-top: 1.15rem; }
 
 /* ---- shared finish rail ---- */
 .setfin { position: relative; background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); padding: 1.3rem 1.4rem 1.4rem; }
