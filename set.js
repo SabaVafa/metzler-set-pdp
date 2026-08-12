@@ -355,7 +355,13 @@
     maxReached = Math.max(maxReached, stepIndex(id));
     ['prodA', 'prodB', 'setsum'].forEach(function (sid) { var n = document.getElementById(sid); if (n) n.hidden = (sid !== id); });
     paintSteps();
-    if (scroll) { var dock = document.getElementById('setSteps'); if (dock && dock.scrollIntoView) dock.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (scroll) {
+      var wiz = document.querySelector('.setwiz'), header = document.querySelector('.header');
+      if (wiz) {
+        var offset = (header ? Math.round(header.getBoundingClientRect().height) : 65) + 10;
+        window.scrollTo({ top: Math.max(0, wiz.getBoundingClientRect().top + window.scrollY - offset), behavior: 'smooth' });
+      }
+    }
   }
   function renderSteps() {
     var el = document.getElementById('setSteps'); if (!el) return;
