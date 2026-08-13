@@ -29,22 +29,30 @@
     a: { key: 'a', name: 'Türklingel „Stella"', sub: 'mit Gravur + LED-Taster · Art. 35875', base: 24.99,
       img: 'Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp',
       options: [
-        { id: 'size', label: 'Größe', type: 'radio', def: '8', choices: [
-          { v: '6', label: '6 × 6 cm', d: 0 }, { v: '8', label: '8 × 8 cm', d: 6 }, { v: '10', label: '10 × 10 cm', d: 12 }, { v: '11', label: '11 × 11 cm', d: 18 } ] },
-        { id: 'led', label: 'LED-Taster', type: 'radio', def: 'no', choices: [
-          { v: 'no', label: 'Ohne Beleuchtung', d: 0 }, { v: 'white', label: 'LED Weiß', d: 14, dot: '#f2f4f7' }, { v: 'blue', label: 'LED Blau', d: 14, dot: '#2f6bff' } ] },
+        { id: 'size', label: 'Größe', type: 'radio', variant: 'size', def: '8', choices: [
+          { v: '6', label: '6 × 6 cm', sub: 'Kompakt', d: 0 }, { v: '8', label: '8 × 8 cm', sub: 'Standard', d: 6 },
+          { v: '10', label: '10 × 10 cm', sub: 'Groß', d: 12 }, { v: '11', label: '11 × 11 cm', sub: 'XL', d: 18 } ] },
+        { id: 'led', label: 'LED-Taster', type: 'radio', variant: 'taster', def: 'no', choices: [
+          { v: 'no',     label: 'Ohne Beleuchtung', sub: 'Gebürsteter Edelstahl', d: 0,  img: 'assets/taster/taster-none.webp',   glow: null },
+          { v: 'white',  label: 'LED Weiß',          sub: 'Neutralweißer Ring',   d: 14, img: 'assets/taster/taster-white.webp',  glow: '#dfe4ea' },
+          { v: 'blue',   label: 'LED Blau',          sub: 'Kühles Blau',          d: 14, img: 'assets/taster/taster-blue.webp',   glow: '#2f6bff' },
+          { v: 'red',    label: 'LED Rot',           sub: 'Signalrot',            d: 14, img: 'assets/taster/taster-red.webp',    glow: '#e5322d' },
+          { v: 'green',  label: 'LED Grün',          sub: 'Frisches Grün',        d: 14, img: 'assets/taster/taster-green.webp',  glow: '#3fbf4f' },
+          { v: 'yellow', label: 'LED Gelb',          sub: 'Warmes Gelb',          d: 14, img: 'assets/taster/taster-yellow.webp', glow: '#f5c518' } ] },
         { id: 'gravur', label: 'Gravur (Name)', type: 'text', placeholder: 'z. B. Familie Voßberg', hint: 'inklusive', d: 0 } ] },
     b: { key: 'b', name: 'Briefkasten „Siebert"', sub: 'hochwertiger Stahl · 37 × 37 × 10,5 cm · Art. 36621', base: 76.49,
       img: 'Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp',
       options: [
-        { id: 'mount', label: 'Montage', type: 'radio', def: 'wall', choices: [
-          { v: 'wall', label: 'Wandmontage', d: 0 }, { v: 'stand', label: 'Standbriefkasten mit Pfosten', d: 59 } ] },
+        { id: 'mount', label: 'Montage', type: 'radio', variant: 'photo', def: 'wall', choices: [
+          { v: 'wall',  label: 'Wandmontage',     sub: 'An der Wand',            d: 0,  icon: 'wall',  img: '' },
+          { v: 'stand', label: 'Standbriefkasten', sub: 'Freistehend mit Pfosten', d: 59, icon: 'stand', img: '' } ] },
         { id: 'gravur', label: 'Namensgravur', type: 'text', placeholder: 'z. B. Voßberg', hint: 'inklusive', d: 0 } ] }
   };
 
-  var state = { finishA: null, finishB: null, diverged: false, a: {}, b: {} };
+  var state = { finishA: null, finishB: null, diverged: false, qty: 1, a: {}, b: {} };
   ['a', 'b'].forEach(function (k) { PRODUCTS[k].options.forEach(function (o) { state[k][o.id] = o.type === 'radio' ? o.def : ''; }); });
 
+  var clamp = function (n, lo, hi) { return Math.max(lo, Math.min(hi, n)); };
   var eur = function (n) { return n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
   var swatchStyle = function (f) { return f.img ? "background-image:url('" + f.img + "')" : 'background:' + (f.chip || '#ccc'); };
@@ -52,6 +60,21 @@
   function productTotal(k) { var t = PRODUCTS[k].base; PRODUCTS[k].options.forEach(function (o) { t += optDelta(k, o); }); return t; }
   function finishFor(k) { return byId(k === 'a' ? state.finishA : state.finishB); }
   function bothChosen() { return !!state.finishA && !!state.finishB; }
+
+  /* primary buy row = qty stepper + "Set in den Warenkorb" CTA, laid out with the
+     single-product PDP .cfgb-buyrow (stepper hidden until a set colour is chosen). */
+  function buyRow(id, label) {
+    var ready = bothChosen();
+    return '<div class="cfgb-buyrow setbuy__row' + (ready ? '' : ' is-precolor') + '">' +
+      '<span class="cfg-opt__qty cfgb-buyrow__qty" aria-label="Menge Set">' +
+        '<button type="button" data-qd="-1" aria-label="Menge verringern"' + (state.qty <= 1 ? ' disabled' : '') + '>−</button>' +
+        '<span class="setbuy__qtyval">' + state.qty + '</span>' +
+        '<button type="button" data-qd="1" aria-label="Menge erhöhen">+</button>' +
+      '</span>' +
+      '<button type="button" class="setsum__cta setwiz__cta is-ready"' + (id ? ' id="' + id + '"' : '') + ' data-addcart>' + (label || '') + '</button>' +
+    '</div>';
+  }
+  function applyQty(d) { var q = clamp(state.qty + d, 1, 20); if (q !== state.qty) { state.qty = q; refresh(); } }
 
   /* ---- finish rail ----
      Mirrors the single-product PDP colour section (flow-b) exactly: the same
@@ -188,10 +211,64 @@
     return '<button type="button" class="cfg-opt" role="radio" aria-checked="false" data-opt="' + o.id + '" data-val="' + c.v + '">' +
       '<span class="cfg-opt__mark"></span><span class="cfg-opt__body"><span class="cfg-opt__name">' + esc(c.label) + '</span></span>' + dot + price + '</button>';
   }
+  /* ---- premium visual option cards — one shared system (.cfg-tstr card chrome:
+     border, hover lift, teal selected state, check badge). Each variant swaps only
+     the "stage" (the visual): a product photo (taster/photo) or a CSS render (size). ---- */
+  var OPT_CHECK = '<span class="cfg-tstr__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
+  var MOUNT_ICON = {
+    wall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="7" y="5" width="10" height="11" rx="1.2"/><path d="M9 16v4M15 16v4M9.5 9h5M9.5 12h5"/></svg>',
+    stand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="12" height="9" rx="1.2"/><path d="M8.5 8h7"/><path d="M12 12.5V21M9 21h6"/></svg>'
+  };
+  function cardMeta(c, chip) {
+    var price = c.d ? '<span class="cfg-tstr__price">+' + eur(c.d) + '</span>' : '<span class="cfg-tstr__price is-incl">inklusive</span>';
+    var sub = !c.sub ? '' : chip
+      ? '<span class="cfg-tstr__key"><span class="cfg-tstr__chip"></span><span class="cfg-tstr__sub">' + esc(c.sub) + '</span></span>'
+      : '<span class="cfg-tstr__sub">' + esc(c.sub) + '</span>';
+    return '<span class="cfg-tstr__meta"><span class="cfg-tstr__name">' + esc(c.label) + '</span>' + sub + price + '</span>';
+  }
+  function cardOpen(k, o, c, cls, style) {
+    return '<button type="button" class="cfg-opt cfg-tstr ' + cls + '" role="radio" aria-checked="false" aria-label="' + esc(c.label) +
+      '" data-opt="' + o.id + '" data-val="' + c.v + '"' + (style || '') + '>' + OPT_CHECK;
+  }
+  function tasterCard(k, o, c) {
+    return cardOpen(k, o, c, 'cfg-photo', c.glow ? ' style="--tstr-glow:' + c.glow + '"' : '') +
+      '<span class="cfg-tstr__stage"><img src="' + c.img + '" alt="Metzler Taster – ' + esc(c.label) + '" loading="lazy"></span>' +
+      cardMeta(c, true) + '</button>';
+  }
+  function photoCard(k, o, c) {
+    var stage = c.img
+      ? '<span class="cfg-tstr__stage"><img src="' + c.img + '" alt="' + esc(c.label) + '" loading="lazy"></span>'
+      : '<span class="cfg-tstr__stage cfg-tstr__stage--icon">' + (MOUNT_ICON[c.icon] || '') + '</span>';
+    return cardOpen(k, o, c, 'cfg-photo') + stage + cardMeta(c) + '</button>';
+  }
+  var SIZE_IMG = 'assets/size/stella-plate.webp';
+  function sizeCard(k, o, c) {
+    var sz = (parseInt(c.v, 10) - 6) / 5;   /* 6→0 … 11→1, drives the real-photo scale */
+    return cardOpen(k, o, c, 'cfg-size') +
+      '<span class="cfg-size__stage"><img class="cfg-size__img" src="' + SIZE_IMG + '" alt="Metzler Türklingel „Stella" – ' + esc(c.label) + '" loading="lazy" style="--sz:' + sz.toFixed(3) + '"></span>' +
+      cardMeta(c) + '</button>';
+  }
+  /* text option → premium field with a live engraved-nameplate preview */
+  function textField(k, o) {
+    var name = k + '-' + o.id, val = state[k][o.id] || '';
+    return '<div class="cfgb-field is-shown setgrv' + (val ? ' is-filled' : '') + '">' +
+      '<div class="setgrv__field">' +
+        '<svg class="setgrv__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
+        '<input type="text" class="cfg-input setgrv__input" name="' + name + '" placeholder="' + esc(o.placeholder || '') + '" value="' + esc(val) + '" maxlength="24" autocomplete="off">' +
+      '</div>' +
+      '<div class="setgrv__preview"><span class="setgrv__plate"><span class="setgrv__engraved" id="grvprev-' + name + '">' + (val ? esc(val) : 'Ihr Name') + '</span></span>' +
+        '<span class="setgrv__hint">Gravur auf dem Namensschild · inklusive</span></div>' +
+    '</div>';
+  }
+  function optGrid(cls, label, o, render) {
+    return '<div class="cfg-tstr-grid ' + cls + '" role="radiogroup" aria-label="' + esc(label) + '">' + o.choices.map(render).join('') + '</div>';
+  }
   function optBody(k, o) {
-    return o.type === 'radio'
-      ? '<div class="cfg-opts" role="radiogroup" aria-label="' + esc(o.label) + '">' + o.choices.map(function (c) { return optRow(k, o, c); }).join('') + '</div>'
-      : '<div class="cfgb-field is-shown"><input type="text" class="cfg-input" name="' + k + '-' + o.id + '" placeholder="' + esc(o.placeholder || '') + '" value="' + esc(state[k][o.id]) + '" maxlength="24" autocomplete="off"></div>';
+    if (o.type === 'text') return textField(k, o);
+    if (o.variant === 'taster') return optGrid('cfg-tstr-grid--3', o.label, o, function (c) { return tasterCard(k, o, c); });
+    if (o.variant === 'size')   return optGrid('cfg-size-grid',   o.label, o, function (c) { return sizeCard(k, o, c); });
+    if (o.variant === 'photo')  return optGrid('cfg-photo-grid',  o.label, o, function (c) { return photoCard(k, o, c); });
+    return '<div class="cfg-opts" role="radiogroup" aria-label="' + esc(o.label) + '">' + o.choices.map(function (c) { return optRow(k, o, c); }).join('') + '</div>';
   }
   function collapseSteps(el) {
     el.querySelectorAll('.stepr__item').forEach(function (it) { it.classList.remove('is-active'); it.classList.add('is-done');
@@ -225,18 +302,26 @@
       (k === 'b'
         ? '<button type="button" class="setwiz__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Türklingel</button>'
         : '<span class="setwiz__spacer"></span>') +
-      '<span class="setwiz__total" id="wiztotal-' + k + '"></span>' +
+      '<button type="button" class="setwiz__total" id="wiztoggle-' + k + '" data-pricetoggle aria-expanded="false" aria-controls="setdt-' + k + '" aria-label="Preisdetails anzeigen">' +
+        '<span class="setwiz__totallbl" id="wiztotal-' + k + '"></span>' +
+        '<svg class="setwiz__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
+      '</button>' +
       '<button type="button" class="setwiz__next" data-wiznext>' + (k === 'a' ? 'Weiter zum Briefkasten' : 'Weiter zur Übersicht') + '</button>' +
-      '</div>';
+      '</div>' +
+      '<div class="setwiz__details" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>' +
+      '<div class="setwiz__buy">' + buyRow('stepcta-' + k, '') + '</div>';
     el.innerHTML =
       '<div class="setprod__inner"><div class="setprod__head"><img class="setprod__img" src="' + p.img + '" alt="' + esc(p.name) + '">' +
       '<div class="setprod__id"><span class="setprod__cap">' + (k === 'a' ? 'Produkt 1' : 'Produkt 2') + '</span>' +
-      '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub) + '</p>' +
-      '<div class="setprod__finishslot" id="fin' + k + '"></div></div>' +
+      '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub) + '</p></div>' +
       '<div class="setprod__price" id="price' + k + '"></div></div>' + sep +
       '<ol class="stepr setprod__steps">' + steps + '</ol>' + nav + '</div>';
     el.addEventListener('change', function (e) { var t = e.target; if (!t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refresh(); });
-    el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refreshSummary(); refreshPick(k); });
+    el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return;
+      state[k][t.name.slice(2)] = t.value;
+      var prev = document.getElementById('grvprev-' + t.name);
+      if (prev) { prev.textContent = t.value || 'Ihr Name'; var f = t.closest('.setgrv'); if (f) f.classList.toggle('is-filled', !!t.value); }
+      refreshSummary(); refreshPick(k); });
     el.addEventListener('click', function (e) {
       var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }
       var opt = e.target.closest('.cfg-opt[data-opt]');
@@ -251,10 +336,6 @@
   function refreshPanel(k) {
     var el = document.getElementById('prod' + k.toUpperCase()), f = finishFor(k);
     el.classList.toggle('is-set', !!f);
-    var fin = document.getElementById('fin' + k);
-    if (fin) fin.innerHTML = f
-      ? '<span class="setprod__inherit is-set"><span class="setprod__fchip" style="' + swatchStyle(f) + '"></span><span class="setprod__inheritlbl">Set-Farbe</span><span class="setprod__inheritval">' + esc(f.name) + (f.code ? ' · ' + f.code : '') + '</span></span>'
-      : '<span class="setprod__inherit"><span class="setprod__fchip setprod__fchip--wait"></span>Übernimmt die Set-Farbe</span>';
     var pr = document.getElementById('price' + k); if (pr) pr.innerHTML = '<span class="setprod__pricecap">Konfiguriert</span><b>' + eur(productTotal(k)) + '</b>';
     el.querySelectorAll('.cfg-opt[data-opt]').forEach(function (b) {
       var on = state[k][b.getAttribute('data-opt')] === b.getAttribute('data-val');
@@ -263,6 +344,40 @@
     refreshPick(k);
     if (k === 'a') { var sep = document.getElementById('sepA'); if (sep) sep.hidden = !state.diverged;
       el.querySelectorAll('[data-fina]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-fina') === state.finishA ? 'true' : 'false'); }); }
+  }
+
+  /* ---- itemised price breakdown (disclosure on the config steps) ----
+     Lists each product's base price and every surcharge option that was added
+     (radio deltas > 0) plus any inklusive personalisation, then the set discount
+     and quantity-aware total. Shared by both product-step "Preisdetails" panels. */
+  function priceBreakdown() {
+    var q = state.qty, ready = bothChosen();
+    var groups = ['a', 'b'].map(function (k) {
+      var p = PRODUCTS[k];
+      var lines = p.options.map(function (o) {
+        if (o.type === 'radio') {
+          var d = optDelta(k, o); if (d <= 0) return '';
+          var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0];
+          return '<div class="setdt__line"><span class="setdt__lname">' + esc(o.label) + ' · ' + esc(c.label) + '</span>' +
+            '<span class="setdt__lplus">+ ' + eur(d * q) + '</span></div>';
+        }
+        var val = (state[k][o.id] || '').trim(); if (!val) return '';
+        return '<div class="setdt__line"><span class="setdt__lname">' + esc(o.label) + ': „' + esc(val) + '"</span>' +
+          '<span class="setdt__linc">inklusive</span></div>';
+      }).join('');
+      return '<div class="setdt__grp">' +
+        '<div class="setdt__prod"><span class="setdt__pname">' + esc(p.name) + (q > 1 ? ' <span class="setdt__x">× ' + q + '</span>' : '') + '</span>' +
+          '<span class="setdt__pbase">' + eur(p.base * q) + '</span></div>' + lines +
+      '</div>';
+    }).join('');
+    var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
+    return '<div class="setdt">' + groups +
+      '<div class="setdt__rows">' +
+        '<div class="setdt__row"><span>Zwischensumme</span><span>' + eur(sub) + '</span></div>' +
+        (ready ? '<div class="setdt__row setdt__row--disc"><span>Set-Rabatt −10&nbsp;%</span><span>−' + eur(disc) + '</span></div>' : '') +
+      '</div>' +
+      '<div class="setdt__total"><span>Gesamt</span><span>' + eur(total) + '</span></div>' +
+    '</div>';
   }
 
   /* ---- combined summary ---- */
@@ -282,13 +397,13 @@
           meta +
           (opts ? '<span class="setsum__iopts">' + opts + '</span>' : '') +
         '</div>' +
-        '<span class="setsum__iprice">' + eur(productTotal(k)) + '</span></div>';
+        '<span class="setsum__iprice">' + (state.qty > 1 ? '<span class="setsum__iqty">' + state.qty + '×&nbsp;</span>' : '') + eur(productTotal(k) * state.qty) + '</span></div>';
     }).join('');
   }
   /* lead price panel at the top of the buy column (single-product PDP position) */
   function refreshLead() {
     var el = document.getElementById('setLead'); if (!el) return;
-    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
+    var sub = (productTotal('a') + productTotal('b')) * state.qty, ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
     el.innerHTML = '<div class="pdp-price pdp-price--lead">' +
       (ready ? '<span class="pdp-offer"><b class="pdp-offer__pct">−10&nbsp;%</b><span class="pdp-offer__dur">Set-Vorteil</span></span>' : '') +
       (ready ? '<span class="cfgb-price__label">Preis wie konfiguriert</span>' : '') +
@@ -303,18 +418,19 @@
   }
   function refreshSummary() {
     var el = document.getElementById('setsum');
-    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
+    var q = state.qty, ready = bothChosen();
+    var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
     el.innerHTML = '<button type="button" class="setwiz__back setsum__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Zurück zum Briefkasten</button>' +
       '<div class="setsum__card">' +
       '<h2 class="setsum__title">Ihr Set</h2>' +
       '<div class="setsum__items">' + lineItems() + '</div>' +
       '<div class="setsum__rows">' +
         '<div class="setsum__row"><span>Zwischensumme</span><span>' + eur(sub) + '</span></div>' +
-        '<div class="setsum__row setsum__row--disc' + (ready ? '' : ' is-off') + '"><span>Set-Rabatt <em>−10&nbsp;%</em></span><span>' + (ready ? '−' + eur(disc) : '–') + '</span></div>' +
+        (ready ? '<div class="setsum__row setsum__row--disc"><span>Set-Rabatt <em>−10&nbsp;%</em></span><span>−' + eur(disc) + '</span></div>' : '') +
       '</div>' +
       '<div class="setsum__total"><div class="setsum__totl"><span class="setsum__totcap">Gesamt</span><span class="setsum__totvat">inkl. MwSt.</span></div>' +
         '<div class="setsum__totr">' + (ready ? '<span class="setsum__totwas">' + eur(sub) + '</span>' : '') + '<b id="setTotal" class="setsum__totnow">' + eur(total) + '</b></div></div>' +
-      '<button type="button" class="setsum__cta is-ready" data-addcart>' + (ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') + '</button>' +
+      buyRow('', ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') +
       '</div>' +
       '<div class="bx-delivery setsum__delivery" aria-label="Versand und Lieferung">' +
         '<div class="bx-delivery__row"><span class="bx-delivery__key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Versanddatum</span><span class="bx-delivery__val"><b class="ph">TT.MM. – TT.MM.</b></span></div>' +
@@ -379,8 +495,19 @@
       '</div>';
   }
   function refreshWizTotals() {
-    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
-    ['a', 'b'].forEach(function (k) { var el = document.getElementById('wiztotal-' + k); if (el) el.innerHTML = 'Set gesamt · <b>' + eur(total) + '</b>'; });
+    var sub = (productTotal('a') + productTotal('b')) * state.qty, ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
+    var breakdown = priceBreakdown();
+    ['a', 'b'].forEach(function (k) {
+      var el = document.getElementById('wiztotal-' + k); if (el) el.innerHTML = 'Set gesamt · <b>' + eur(total) + '</b>';
+      var dt = document.getElementById('setdtbody-' + k); if (dt) dt.innerHTML = breakdown;
+      var cta = document.getElementById('stepcta-' + k); if (cta) cta.textContent = ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen';
+      var row = document.querySelector('#prod' + k.toUpperCase() + ' .setbuy__row');
+      if (row) {
+        row.classList.toggle('is-precolor', !ready);
+        var val = row.querySelector('.setbuy__qtyval'); if (val) val.textContent = state.qty;
+        var minus = row.querySelector('button[data-qd="-1"]'); if (minus) minus.disabled = state.qty <= 1;
+      }
+    });
   }
   function refreshSteps() { paintSteps(); refreshWizTotals(); }
 
@@ -389,8 +516,13 @@
   if (cfgRoot) cfgRoot.addEventListener('click', function (e) {
     var tab = e.target.closest('#setSteps .cfgb-bar__step');
     if (tab) { showStep(tab.getAttribute('data-step'), true); return; }
+    var pt = e.target.closest('[data-pricetoggle]');
+    if (pt) { var open = pt.getAttribute('aria-expanded') === 'true'; pt.setAttribute('aria-expanded', open ? 'false' : 'true');
+      var body = document.getElementById(pt.getAttribute('aria-controls')); if (body) body.classList.toggle('is-open', !open); return; }
     if (e.target.closest('[data-wiznext]')) { showStep(STEPS[Math.min(stepIndex(currentStepId) + 1, STEPS.length - 1)].id, true); return; }
     if (e.target.closest('[data-wizprev]')) { showStep(STEPS[Math.max(stepIndex(currentStepId) - 1, 0)].id, true); return; }
+    var qd = e.target.closest('button[data-qd]');
+    if (qd) { applyQty(parseInt(qd.getAttribute('data-qd'), 10)); return; }
     if (e.target.closest('[data-addcart]')) { addSetToCart(); return; }
   });
 
@@ -399,7 +531,7 @@
   function syncSticky() {
     var fin = document.getElementById('pdpStickyFinish');
     if (fin) { var f = !state.diverged && byId(state.finishA); fin.textContent = f ? finishLabel(f) : 'Farbe wählen'; }
-    var sub = productTotal('a') + productTotal('b'), ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
+    var sub = (productTotal('a') + productTotal('b')) * state.qty, ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
     var pr = document.getElementById('bStickyPrice'); if (pr) pr.innerHTML = (ready ? 'Set · ' : 'ab ') + '<b>' + eur(total) + '</b>';
     var lbl = document.getElementById('pdpStickyLabel'); if (lbl) lbl.textContent = ready ? 'In den Warenkorb' : 'Bitte Set-Farbe wählen';
     var cta = document.getElementById('pdpStickyCta'); if (cta) cta.setAttribute('data-mode', ready ? 'cart' : 'color');
@@ -419,9 +551,13 @@
     if (badge) badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
   }
   function setupSticky() {
-    var bar = document.getElementById('pdpStickyBar'), anchor = document.querySelector('.setwiz'); if (!bar || !anchor) return;
+    var bar = document.getElementById('pdpStickyBar'); if (!bar) return;
+    /* reveal as soon as the primary CTA of the active step leaves the viewport (the
+       single-product PDP anchors its sticky bar to the buy CTA, not the whole card). */
     var reveal = function () {
-      var show = anchor.getBoundingClientRect().bottom <= 8;
+      var ctas = document.querySelectorAll('.setwiz__stage [data-addcart]'), cta = null;
+      for (var i = 0; i < ctas.length; i++) { if (ctas[i].offsetParent) { cta = ctas[i]; break; } }
+      var show = !!cta && cta.getBoundingClientRect().bottom <= 8;
       bar.classList.toggle('is-visible', show); bar.setAttribute('aria-hidden', show ? 'false' : 'true');
     };
     window.addEventListener('scroll', reveal, { passive: true });

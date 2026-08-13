@@ -102,18 +102,6 @@
 .setprod__cap { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-teal); }
 .setprod__name { margin: 0.15rem 0; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-digital-black); }
 .setprod__sub { margin: 0; font-size: 0.75rem; color: var(--color-graphite-600); }
-.setprod__finishslot { margin-top: 0.6rem; }
-.setprod__finish { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; font-size: 0.75rem; font-weight: 700;
-  color: var(--color-digital-black); background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-pill); }
-.setprod__fchip { width: 0.95rem; height: 0.95rem; border-radius: 0.2rem; background-size: cover; background-position: center; border: 1px solid rgba(0,0,0,0.14); }
-/* inherited-finish chip: each product reads its colour from the set foundation.
-   Resting state (no colour yet) is informative, never a blocker. */
-.setprod__inherit { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.65rem; font-size: 0.75rem; font-weight: 700;
-  color: var(--color-graphite-600); background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-pill); }
-.setprod__inherit.is-set { color: var(--color-digital-black); background: var(--color-teal-50); border-color: var(--color-teal-75, var(--color-teal-50)); }
-.setprod__inheritlbl { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-teal); }
-.setprod__inheritval { color: var(--color-digital-black); }
-.setprod__fchip--wait { border: 1px dashed var(--color-graphite-400); background: repeating-linear-gradient(45deg, var(--color-graphite-100) 0 3px, transparent 3px 6px); }
 .setprod__price { flex: none; display: flex; flex-direction: column; align-items: flex-end; }
 .setprod__pricecap { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-graphite-500); }
 .setprod__price b { font-size: 1.25rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
@@ -127,24 +115,57 @@
 /* product-level nav footer (Zurück · running total · Weiter) */
 .setwiz__nav { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
 .setwiz__spacer { flex: 0 0 auto; }
-.setwiz__total { flex: 1 1 auto; min-width: 0; font-size: 0.8125rem; color: var(--color-graphite-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* "Set gesamt · X €" is now a Preisdetails disclosure toggle */
+.setwiz__total { flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; gap: 0.35rem; font: inherit; font-size: 0.8125rem;
+  color: var(--color-graphite-600); background: none; border: 0; padding: 0.4rem 0; cursor: pointer; text-align: left; transition: color .15s; }
+.setwiz__totallbl { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .setwiz__total b { color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
+.setwiz__total:hover, .setwiz__total:hover b { color: var(--color-teal); }
+.setwiz__chev { width: 0.9rem; height: 0.9rem; flex-shrink: 0; transition: transform .3s ease; }
+.setwiz__total[aria-expanded="true"] .setwiz__chev { transform: rotate(180deg); }
+/* collapsible breakdown body (grid-rows animation, single-PDP .cfgb-acc pattern) */
+.setwiz__details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
+.setwiz__details.is-open { grid-template-rows: 1fr; }
+.setwiz__detailsinner { overflow: hidden; min-height: 0; }
+.setdt { margin-top: 0.9rem; padding: 0.9rem 1rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); }
+.setdt__grp + .setdt__grp { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setdt__prod { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; }
+.setdt__pname { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); }
+.setdt__x { font-weight: 700; color: var(--color-graphite-500); }
+.setdt__pbase { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setdt__line { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.32rem; padding-left: 0.85rem; position: relative; }
+.setdt__line::before { content: ""; position: absolute; left: 0.2rem; top: 0.55em; width: 0.28rem; height: 0.28rem; border-radius: 50%; background: var(--color-graphite-300); }
+.setdt__lname { font-size: 0.78rem; color: var(--color-graphite-700); }
+.setdt__lplus { font-size: 0.78rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setdt__linc { font-size: 0.78rem; font-weight: 600; color: var(--color-green); white-space: nowrap; }
+.setdt__rows { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--color-graphite-200); display: flex; flex-direction: column; gap: 0.4rem; }
+.setdt__row { display: flex; justify-content: space-between; gap: 0.8rem; font-size: 0.8125rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
+.setdt__row--disc { color: var(--color-green); font-weight: 700; }
+.setdt__total { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.55rem; padding-top: 0.6rem; border-top: 2px solid var(--color-graphite-200);
+  font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
 .setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-graphite-700);
   background: none; border: 0; padding: 0.55rem 0.2rem; cursor: pointer; transition: color .16s; }
 .setwiz__back svg { width: 1.05rem; height: 1.05rem; }
 .setwiz__back:hover { color: var(--color-teal); }
+/* configuration nav = SECONDARY action (black), mirroring the single PDP .cfgb-nav__fwd */
 .setwiz__next { flex: none; display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-size: 0.9375rem; font-weight: 700; color: #fff;
-  background: var(--color-teal); border: 0; border-radius: var(--radius); padding: 0.7rem 1.25rem; cursor: pointer;
-  box-shadow: 0 0.5rem 1.1rem rgba(1,82,83,0.18); transition: background .16s, box-shadow .16s, transform .12s; }
+  background: var(--color-digital-black); border: 0; border-radius: var(--radius); padding: 0.7rem 1.25rem; cursor: pointer;
+  transition: background .16s, transform .12s; }
 .setwiz__next::after { content: "→"; font-weight: 400; }
-.setwiz__next:hover { background: var(--color-teal-600); box-shadow: 0 0.6rem 1.3rem rgba(1,82,83,0.24); }
+.setwiz__next:hover { background: var(--color-black); }
 .setwiz__next:active { transform: translateY(1px); }
-.setwiz__next:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+.setwiz__next:focus-visible { outline: 2px solid var(--color-digital-black); outline-offset: 2px; }
+/* PRIMARY action (teal) at the bottom of each product step — the always-live set cart.
+   Qty stepper + CTA share the single-PDP .cfgb-buyrow row. */
+.setwiz__buy { margin-top: 0.85rem; }
+.setbuy__row { align-items: stretch; }
+.setbuy__row.is-precolor .cfgb-buyrow__qty { display: none; }        /* no colour yet → CTA spans full width */
+.cfgb-buyrow .setsum__cta { flex: 1 1 auto; width: auto; height: 3rem; padding-top: 0; padding-bottom: 0; margin-top: 0; }
 /* back link above the Übersicht summary */
 .setsum__back { margin-bottom: 0.85rem; }
 /* single-product price panel inside the set summary */
 .setsum .pdp-price--lead { margin-top: 1.15rem; }
-.setsum .setsum__cta { margin-top: 1.1rem; }
+.setsum .setbuy__row { margin-top: 1.1rem; }
 
 /* separate-finish (divergence) block */
 .setprod__sep { margin: 1rem 0 0.4rem; padding: 0.85rem 1rem; background: var(--color-paper); border: 1px dashed var(--color-graphite-300); border-radius: var(--radius-lg); }
@@ -183,6 +204,86 @@
 .cfg-opt__dot { flex: none; width: 0.9rem; height: 0.9rem; border-radius: 50%; margin-left: auto; margin-right: 0.7rem;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.22); }
 .cfg-opt__dot + .cfg-opt__price { margin-left: 0; }
+
+/* ============================================================
+   Taster illumination selector — premium visual swatch grid.
+   Images keep their native WHITE background, so the photo sits on a
+   SEAMLESS white stage (no visible box). The LED colour is expressed
+   OUTSIDE the photo: a colour-key chip + a rounded coloured under-glow
+   on the whole card (never behind the image → never a white box).
+   ============================================================ */
+.cfg-tstr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; }
+.cfg-tstr { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem;
+  padding: 0.55rem 0.55rem 0.7rem; background: var(--color-white); border: 1.5px solid var(--color-graphite-200);
+  border-radius: var(--radius-lg); cursor: pointer; text-align: center; box-shadow: 0 1px 2px rgba(10,20,20,0.05);
+  transition: border-color .18s ease, box-shadow .22s ease, transform .18s ease; -webkit-tap-highlight-color: transparent; }
+.cfg-tstr:hover { transform: translateY(-2px);
+  box-shadow: 0 0.7rem 1.4rem -0.75rem rgba(10,20,20,0.32), 0 0 1rem -0.15rem color-mix(in srgb, var(--tstr-glow, transparent) 30%, transparent); }
+.cfg-tstr:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+.cfg-tstr.is-selected { border-color: var(--color-teal);
+  box-shadow: inset 0 0 0 1px var(--color-teal), 0 0.85rem 1.7rem -0.8rem color-mix(in srgb, var(--tstr-glow, var(--color-teal)) 60%, transparent); }
+
+/* seamless white stage — the photo's white background melts into it (no box).
+   isolation:isolate makes the stage its own stacking context, so the multiply
+   blends ONLY with this white backdrop — never the teal selection glow behind it. */
+.cfg-tstr__stage { position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; border-radius: var(--radius);
+  background: #fff; overflow: hidden; isolation: isolate; }
+.cfg-tstr__stage img { width: 88%; max-width: 5.4rem; aspect-ratio: 1 / 1; object-fit: contain; mix-blend-mode: multiply; transition: transform .22s ease; }
+/* fade the stage edges to pure white so the product photo's own soft shadow melts
+   away — the button sits in a clean white "spotlight", never a tinted box. */
+.cfg-tstr__stage::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(circle at 50% 47%, transparent 68%, #fff 100%); }
+.cfg-tstr:hover .cfg-tstr__stage img, .cfg-tstr.is-selected .cfg-tstr__stage img { transform: scale(1.05); }
+
+.cfg-tstr__meta { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; }
+.cfg-tstr__name { font-size: 0.8125rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-digital-black); line-height: 1.2; }
+/* colour-key: small ring dot that carries the LED colour (steel gradient for "none") */
+.cfg-tstr__key { display: inline-flex; align-items: center; gap: 0.32rem; }
+.cfg-tstr__chip { width: 0.6rem; height: 0.6rem; border-radius: 50%; flex: none;
+  background: var(--tstr-glow, linear-gradient(135deg, #eceef1, #b7bcc2));
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.16), 0 0 0.25rem color-mix(in srgb, var(--tstr-glow, transparent) 70%, transparent); }
+.cfg-tstr__sub { font-size: 0.6875rem; color: var(--color-graphite-500); line-height: 1.2; }
+.cfg-tstr__price { margin-top: 0.2rem; font-size: 0.75rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
+.cfg-tstr__price.is-incl { color: var(--color-green); }
+
+.cfg-tstr__check { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2; width: 1.3rem; height: 1.3rem; border-radius: 50%;
+  background: var(--color-teal); color: #fff; display: grid; place-items: center; opacity: 0; transform: scale(0.5);
+  transition: opacity .18s ease, transform .18s cubic-bezier(.2,.9,.3,1.4); }
+.cfg-tstr__check svg { width: 0.8rem; height: 0.8rem; }
+.cfg-tstr.is-selected .cfg-tstr__check { opacity: 1; transform: scale(1); }
+
+/* ---- Größe · real Stella product photo, scaled proportionally to the cm value ---- */
+.cfg-size-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cfg-size__stage { position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; border-radius: var(--radius);
+  background: #fff; overflow: hidden; isolation: isolate; }
+.cfg-size__stage::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(circle at 50% 47%, transparent 68%, #fff 100%); }
+.cfg-size__img { width: calc(38% + var(--sz, 0) * 46%); aspect-ratio: 1 / 1; object-fit: contain; mix-blend-mode: multiply;
+  filter: drop-shadow(0 0.25rem 0.5rem rgba(10,20,20,0.18)); transition: width .24s cubic-bezier(.2,.7,.2,1); }
+
+/* ---- Montage · photo cards share the Taster stage; icon fallback until images arrive ---- */
+.cfg-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cfg-tstr__stage--icon { background: linear-gradient(180deg, #fbfcfd 0%, #eef1f4 100%); }
+.cfg-tstr__stage--icon svg { width: 42%; height: 42%; color: var(--color-graphite-500); }
+
+@media (max-width: 30rem) {
+  .cfg-tstr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cfg-size-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---- Gravur · premium field + live engraved-nameplate preview ---- */
+.setgrv { gap: 0.7rem; }
+.setgrv__field { position: relative; }
+.setgrv__icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); width: 1.1rem; height: 1.1rem; color: var(--color-graphite-500); pointer-events: none; }
+.setgrv__input { padding-left: 2.6rem; }
+.setgrv__preview { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.setgrv__plate { width: 100%; box-sizing: border-box; display: grid; place-items: center; min-height: 2.6rem; padding: 0.6rem 1rem; border-radius: var(--radius);
+  background: linear-gradient(135deg, #e8ebee 0%, #c7ccd1 52%, #e2e5e8 100%);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.75), inset 0 -1px 2px rgba(10,20,20,0.14), 0 1px 3px rgba(10,20,20,0.16); }
+.setgrv__engraved { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.02em;
+  color: #6b7177; text-shadow: 0 1px 0 rgba(255,255,255,0.7), 0 -1px 1px rgba(10,20,20,0.32); }
+.setgrv:not(.is-filled) .setgrv__engraved { color: #a4aab0; font-weight: 600; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+.setgrv__hint { font-size: 0.6875rem; color: var(--color-graphite-500); text-align: center; }
 
 /* selectable option cards */
 .setopt__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.25rem, 1fr)); gap: 0.55rem; }
@@ -296,12 +397,12 @@
 .setsum__iopt { font-size: 0.6875rem; color: var(--color-graphite-500); }
 .setsum__iopt em { font-style: normal; font-weight: 600; color: var(--color-graphite-600); }
 .setsum__iprice { grid-row: 1 / span 2; align-self: center; font-size: 0.9375rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setsum__iqty { font-weight: 700; color: var(--color-graphite-500); }
 
 .setsum__rows { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 0; }
 .setsum__row { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.875rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
 .setsum__row--disc { color: var(--color-green); font-weight: 700; }
 .setsum__row--disc em { font-style: normal; }
-.setsum__row--disc.is-off { color: var(--color-graphite-400); font-weight: 400; }
 
 .setsum__total { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-graphite-300); }
 .setsum__totl { display: flex; flex-direction: column; }
