@@ -248,16 +248,14 @@
       '<span class="cfg-size__stage"><img class="cfg-size__img" src="' + SIZE_IMG + '" alt="Metzler Türklingel „Stella" – ' + esc(c.label) + '" loading="lazy" style="--sz:' + sz.toFixed(3) + '"></span>' +
       cardMeta(c) + '</button>';
   }
-  /* text option → premium field with a live engraved-nameplate preview */
+  /* text option → premium field (engraving-pen icon inside the input) */
   function textField(k, o) {
     var name = k + '-' + o.id, val = state[k][o.id] || '';
-    return '<div class="cfgb-field is-shown setgrv' + (val ? ' is-filled' : '') + '">' +
+    return '<div class="cfgb-field is-shown setgrv">' +
       '<div class="setgrv__field">' +
         '<svg class="setgrv__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
         '<input type="text" class="cfg-input setgrv__input" name="' + name + '" placeholder="' + esc(o.placeholder || '') + '" value="' + esc(val) + '" maxlength="24" autocomplete="off">' +
       '</div>' +
-      '<div class="setgrv__preview"><span class="setgrv__plate"><span class="setgrv__engraved" id="grvprev-' + name + '">' + (val ? esc(val) : 'Ihr Name') + '</span></span>' +
-        '<span class="setgrv__hint">Gravur auf dem Namensschild · inklusive</span></div>' +
     '</div>';
   }
   function optGrid(cls, label, o, render) {
@@ -319,8 +317,6 @@
     el.addEventListener('change', function (e) { var t = e.target; if (!t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refresh(); });
     el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return;
       state[k][t.name.slice(2)] = t.value;
-      var prev = document.getElementById('grvprev-' + t.name);
-      if (prev) { prev.textContent = t.value || 'Ihr Name'; var f = t.closest('.setgrv'); if (f) f.classList.toggle('is-filled', !!t.value); }
       refreshSummary(); refreshPick(k); });
     el.addEventListener('click', function (e) {
       var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }

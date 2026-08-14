@@ -271,19 +271,10 @@
   .cfg-size-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* ---- Gravur · premium field + live engraved-nameplate preview ---- */
-.setgrv { gap: 0.7rem; }
+/* ---- Gravur · premium field (engraving-pen icon inside the input) ---- */
 .setgrv__field { position: relative; }
 .setgrv__icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); width: 1.1rem; height: 1.1rem; color: var(--color-graphite-500); pointer-events: none; }
 .setgrv__input { padding-left: 2.6rem; }
-.setgrv__preview { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-.setgrv__plate { width: 100%; box-sizing: border-box; display: grid; place-items: center; min-height: 2.6rem; padding: 0.6rem 1rem; border-radius: var(--radius);
-  background: linear-gradient(135deg, #e8ebee 0%, #c7ccd1 52%, #e2e5e8 100%);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.75), inset 0 -1px 2px rgba(10,20,20,0.14), 0 1px 3px rgba(10,20,20,0.16); }
-.setgrv__engraved { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.02em;
-  color: #6b7177; text-shadow: 0 1px 0 rgba(255,255,255,0.7), 0 -1px 1px rgba(10,20,20,0.32); }
-.setgrv:not(.is-filled) .setgrv__engraved { color: #a4aab0; font-weight: 600; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
-.setgrv__hint { font-size: 0.6875rem; color: var(--color-graphite-500); text-align: center; }
 
 /* selectable option cards */
 .setopt__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.25rem, 1fr)); gap: 0.55rem; }
