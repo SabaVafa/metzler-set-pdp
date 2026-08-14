@@ -29,7 +29,7 @@
     a: { key: 'a', name: 'Türklingel „Stella"', sub: 'mit Gravur + LED-Taster · Art. 35875', base: 24.99,
       img: 'Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp',
       options: [
-        { id: 'size', label: 'Größe', type: 'radio', variant: 'size', def: '8', choices: [
+        { id: 'size', label: 'Größe', type: 'radio', variant: 'size', required: true, def: '8', choices: [
           { v: '6', label: '6 × 6 cm', sub: 'Kompakt', d: 0 }, { v: '8', label: '8 × 8 cm', sub: 'Standard', d: 6 },
           { v: '10', label: '10 × 10 cm', sub: 'Groß', d: 12 }, { v: '11', label: '11 × 11 cm', sub: 'XL', d: 18 } ] },
         { id: 'led', label: 'LED-Taster', type: 'radio', variant: 'taster', def: 'no', choices: [
@@ -202,7 +202,7 @@
   /* ---- product panels · premium .stepr accordion (single-product configurator) ---- */
   function optPickText(k, o) {
     if (o.type === 'radio') { var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0];
-      return c ? (c.label + (c.d ? ' · +' + eur(c.d) : ' · inklusive')) : 'Bitte wählen'; }
+      return c ? (c.label + (c.d ? ' · +' + eur(c.d) : ' · inklusive')) : (o.required ? 'Bitte wählen' : 'Keine Auswahl'); }
     return state[k][o.id] ? '„' + state[k][o.id] + '"' : 'Ohne Gravur';
   }
   function optRow(k, o, c) {
@@ -321,7 +321,14 @@
     el.addEventListener('click', function (e) {
       var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }
       var opt = e.target.closest('.cfg-opt[data-opt]');
-      if (opt) { state[k][opt.getAttribute('data-opt')] = opt.getAttribute('data-val'); refresh(); advanceStep(el, opt.closest('.stepr__item')); return; }
+      if (opt) {
+        var oid = opt.getAttribute('data-opt'), val = opt.getAttribute('data-val');
+        var odef = PRODUCTS[k].options.filter(function (x) { return x.id === oid; })[0];
+        /* optional options toggle off when their selected card is pressed again;
+           required options (Größe, Anschluss) always keep a selection. */
+        if (odef && !odef.required && state[k][oid] === val) { state[k][oid] = ''; refresh(); return; }
+        state[k][oid] = val; refresh(); advanceStep(el, opt.closest('.stepr__item')); return;
+      }
       if (k === 'a') { var s = e.target.closest('[data-fina]'); if (s) { state.finishA = s.getAttribute('data-fina'); refresh(); return; }
         if (e.target.id === 'relinkA') { state.diverged = false; state.finishA = state.finishB = (byId(state.finishB) && byId(state.finishB).a ? state.finishB : SHARED[0].id); refresh(); } }
     });
