@@ -278,7 +278,8 @@
   }
   function openStep(item) { if (!item) return; item.classList.add('is-active'); item.classList.remove('is-done');
     var h = item.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'true'); }
-  function toggleStep(el, item) { var was = item.classList.contains('is-active'); collapseSteps(el); if (!was) openStep(item); }
+  function toggleStep(el, item) { var was = item.classList.contains('is-active'), prev = el.querySelector('.stepr__item.is-active');
+    collapseSteps(el); if (!was) { openStep(item); scrollStepIntoView(prev, item); } }
   function advanceStep(el, item) { collapseSteps(el); var nx = item && item.nextElementSibling;
     if (nx && nx.classList.contains('stepr__item')) { openStep(nx); scrollStepIntoView(item, nx); } }
   /* after auto-advance, land precisely on the new step: wait for the accordion
