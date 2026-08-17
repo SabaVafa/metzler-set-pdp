@@ -300,9 +300,10 @@
       (k === 'b'
         ? '<button type="button" class="setwiz__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Türklingel</button>'
         : '<span class="setwiz__spacer"></span>') +
-      '<button type="button" class="setwiz__total" id="wiztoggle-' + k + '" data-pricetoggle aria-expanded="false" aria-controls="setdt-' + k + '" aria-label="Preisdetails anzeigen">' +
+      '<button type="button" class="setwiz__total" id="wiztoggle-' + k + '" data-pricetoggle aria-expanded="false" aria-controls="setdt-' + k + '">' +
         '<span class="setwiz__totallbl" id="wiztotal-' + k + '"></span>' +
-        '<svg class="setwiz__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
+        '<span class="setwiz__detailscue"><span class="setwiz__detailstxt">Preisdetails</span>' +
+          '<svg class="setwiz__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>' +
       '</button>' +
       '<button type="button" class="setwiz__next" data-wiznext>' + (k === 'a' ? 'Weiter zum Briefkasten' : 'Weiter zur Übersicht') + '</button>' +
       '</div>' +
