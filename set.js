@@ -44,8 +44,12 @@
       img: 'Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp',
       options: [
         { id: 'mount', label: 'Montage', type: 'radio', variant: 'photo', def: 'wall', choices: [
-          { v: 'wall',  label: 'Wandmontage',     sub: 'An der Wand',            d: 0,  icon: 'wall',  img: '' },
-          { v: 'stand', label: 'Standbriefkasten', sub: 'Freistehend mit Pfosten', d: 59, icon: 'stand', img: '' } ] },
+          { v: 'wall',     label: 'Wandmontage',      sub: 'An der Wand',        d: 0,  img: 'assets/mount/mount-ral7016.webp' },
+          { v: 'complete', label: 'Standbriefkasten', sub: 'Komplett mit Rahmen', d: 89, img: 'assets/mount/mount-edelstahl.webp' },
+          { v: 'ral7016',  label: 'Universal-Rahmen', sub: 'Anthrazit RAL 7016', d: 59, img: 'assets/mount/mount-ral7016.webp' },
+          { v: '2er',      label: '2er-Rahmen',       sub: 'Edelstahl gebürstet', d: 69, img: 'assets/mount/mount-2er.webp' },
+          { v: 'v2a',      label: 'V2A-Rahmen',       sub: 'Edelstahl rostfrei',  d: 79, img: 'assets/mount/mount-v2a.webp' },
+          { v: 'pole',     label: 'Einbeton-Pfosten', sub: 'Zum Einbetonieren',   d: 49, img: 'assets/mount/mount-pole.webp' } ] },
         { id: 'gravur', label: 'Namensgravur', type: 'text', placeholder: 'z. B. Voßberg', hint: 'inklusive', d: 0 } ] }
   };
 
@@ -367,31 +371,33 @@
      and quantity-aware total. Shared by both product-step "Preisdetails" panels. */
   function priceBreakdown() {
     var q = state.qty, ready = bothChosen();
-    var groups = ['a', 'b'].map(function (k) {
-      var p = PRODUCTS[k];
-      var lines = p.options.map(function (o) {
-        if (o.type === 'radio') {
-          var d = optDelta(k, o); if (d <= 0) return '';
-          var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0];
-          return '<div class="setdt__line"><span class="setdt__lname">' + esc(o.label) + ' · ' + esc(c.label) + '</span>' +
-            '<span class="setdt__lplus">+ ' + eur(d * q) + '</span></div>';
-        }
-        var val = (state[k][o.id] || '').trim(); if (!val) return '';
-        return '<div class="setdt__line"><span class="setdt__lname">' + esc(o.label) + ': „' + esc(val) + '"</span>' +
-          '<span class="setdt__linc">inklusive</span></div>';
-      }).join('');
-      return '<div class="setdt__grp">' +
-        '<div class="setdt__prod"><span class="setdt__pname">' + esc(p.name) + (q > 1 ? ' <span class="setdt__x">× ' + q + '</span>' : '') + '</span>' +
-          '<span class="setdt__pbase">' + eur(p.base * q) + '</span></div>' + lines +
-      '</div>';
-    }).join('');
     var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
-    return '<div class="setdt">' + groups +
-      '<div class="setdt__rows">' +
-        '<div class="setdt__row"><span>Zwischensumme</span><span>' + eur(sub) + '</span></div>' +
-        (ready ? '<div class="setdt__row setdt__row--disc"><span>Set-Rabatt −10&nbsp;%</span><span>−' + eur(disc) + '</span></div>' : '') +
+    /* configured-items card — product line + its chosen options (single-product live layout) */
+    var items = ['a', 'b'].map(function (k) {
+      var p = PRODUCTS[k];
+      var opts = p.options.map(function (o) {
+        if (o.type === 'radio') {
+          var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0]; if (!c) return '';
+          var val = c.d > 0 ? '<span class="setdt__oval">+ ' + eur(c.d) + '</span>' : '<span class="setdt__oval is-incl">inklusive</span>';
+          return '<div class="setdt__opt"><span class="setdt__oname">' + esc(o.label) + ' · ' + esc(c.label) + '</span>' + val + '</div>';
+        }
+        var t = (state[k][o.id] || '').trim(); if (!t) return '';
+        return '<div class="setdt__opt"><span class="setdt__oname">' + esc(o.label) + ' · „' + esc(t) + '"</span><span class="setdt__oval is-incl">inklusive</span></div>';
+      }).join('');
+      return '<div class="setdt__item"><span class="setdt__iname">' + esc(p.name) + '</span>' +
+        '<span class="setdt__iprice">' + eur(productTotal(k)) + '</span></div>' + opts;
+    }).join('');
+    /* price summary — mirrors the live "Preis wie konfiguriert" block */
+    return '<div class="setdt">' +
+      '<div class="setdt__items">' + items + '</div>' +
+      '<div class="setdt__sum">' +
+        '<span class="setdt__eyebrow">Preis wie konfiguriert</span>' +
+        '<div class="setdt__price">' + (ready ? '<s class="setdt__was">' + eur(sub) + '</s>' : '') +
+          '<b>' + eur(total) + '</b>' + (q > 1 ? '<span class="setdt__mult">' + q + '&nbsp;×</span>' : '') + '</div>' +
+        (ready ? '<p class="setdt__save">Set-Rabatt −10&nbsp;% · <b>−' + eur(disc) + '</b></p>' : '') +
+        '<p class="setdt__meta">inkl. 19% USt. · <a href="#">zzgl. Versand</a></p>' +
+        '<p class="setdt__avail">Sofort verfügbar</p>' +
       '</div>' +
-      '<div class="setdt__total"><span>Gesamt</span><span>' + eur(total) + '</span></div>' +
     '</div>';
   }
 

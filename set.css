@@ -122,22 +122,32 @@
 /* price-details breakdown — always shown below the step nav */
 .setwiz__details { display: grid; grid-template-rows: 1fr; }
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
-.setdt { margin-top: 0.9rem; padding: 0.9rem 1rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); }
-.setdt__grp + .setdt__grp { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
-.setdt__prod { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; }
-.setdt__pname { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); }
-.setdt__x { font-weight: 700; color: var(--color-graphite-500); }
-.setdt__pbase { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.setdt__line { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.32rem; padding-left: 0.85rem; position: relative; }
-.setdt__line::before { content: ""; position: absolute; left: 0.2rem; top: 0.55em; width: 0.28rem; height: 0.28rem; border-radius: 50%; background: var(--color-graphite-300); }
-.setdt__lname { font-size: 0.78rem; color: var(--color-graphite-700); }
-.setdt__lplus { font-size: 0.78rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.setdt__linc { font-size: 0.78rem; font-weight: 600; color: var(--color-green); white-space: nowrap; }
-.setdt__rows { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--color-graphite-200); display: flex; flex-direction: column; gap: 0.4rem; }
-.setdt__row { display: flex; justify-content: space-between; gap: 0.8rem; font-size: 0.8125rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
-.setdt__row--disc { color: var(--color-green); font-weight: 700; }
-.setdt__total { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.55rem; padding-top: 0.6rem; border-top: 2px solid var(--color-graphite-200);
-  font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
+/* price detail — matches the live product buy box: a configured-items card + a
+   "Preis wie konfiguriert" summary + PayPal note, on a soft paper field. */
+.setdt { margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem;
+  padding: 0.7rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); }
+.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); padding: 1rem 1.1rem; }
+/* configured items */
+.setdt__item { display: flex; justify-content: space-between; align-items: baseline; gap: 0.9rem; }
+.setdt__item ~ .setdt__item { margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setdt__iname { font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); line-height: 1.35; }
+.setdt__iprice { font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setdt__opt { display: flex; justify-content: space-between; gap: 0.9rem; margin-top: 0.5rem; }
+.setdt__oname { font-size: 0.8125rem; color: var(--color-graphite-600); }
+.setdt__oval { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setdt__oval.is-incl { color: var(--color-green); font-weight: 600; }
+/* price summary block (right-aligned, like the live "Preis wie konfiguriert") */
+.setdt__sum { text-align: right; }
+.setdt__eyebrow { font-size: 0.8125rem; color: var(--color-graphite-500); }
+.setdt__price { display: flex; align-items: baseline; justify-content: flex-end; gap: 0.5rem; margin-top: 0.1rem; }
+.setdt__price b { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: var(--color-digital-black); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.setdt__was { font-size: 0.95rem; color: var(--color-graphite-500); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+.setdt__mult { font-size: 0.8125rem; font-weight: 700; color: var(--color-graphite-500); }
+.setdt__save { margin: 0.25rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
+.setdt__save b { color: var(--color-green); }
+.setdt__meta { margin: 0.35rem 0 0; font-size: 0.75rem; color: var(--color-graphite-600); }
+.setdt__meta a { color: var(--color-teal); text-underline-offset: 0.12rem; }
+.setdt__avail { margin: 0.2rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
 .setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-graphite-700);
   background: none; border: 0; padding: 0.55rem 0.2rem; cursor: pointer; transition: color .16s; }
 .setwiz__back svg { width: 1.05rem; height: 1.05rem; }
@@ -257,7 +267,7 @@
   transition: width .24s cubic-bezier(.2,.7,.2,1); }
 
 /* ---- Montage · photo cards share the Taster stage; icon fallback until images arrive ---- */
-.cfg-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Montage uses the same 3-up grid as the Taster (6 items → 3×2). */
 .cfg-tstr__stage--icon { background: linear-gradient(180deg, #fbfcfd 0%, #eef1f4 100%); }
 .cfg-tstr__stage--icon svg { width: 42%; height: 42%; color: var(--color-graphite-500); }
 
