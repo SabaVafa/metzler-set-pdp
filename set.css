@@ -15,7 +15,7 @@
    step title are the card HEADER band; the active step is the card BODY. No nested,
    floating boxes — dock, title and content read as a single unit. ---- */
 .setwiz { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg);
-  box-shadow: 0 1px 2px rgba(16,24,32,0.04), 0 14px 30px -22px rgba(16,24,32,0.22); }
+  box-shadow: 0 1px 2px rgba(16,24,32,0.04), 0 14px 30px -22px rgba(16,24,32,0.22); overflow-anchor: none; }
 /* sticky progress bar: the dock pins below the site header while the configurator
    is in view (single-product PDP behaviour); the dock clips its own ribbon so the
    card no longer needs overflow:hidden (which would break sticky). */
@@ -29,6 +29,10 @@
 .setwiz__stage .setprod { border: 0; border-radius: 0; background: none; padding: 0; }
 .setwiz__stage .setsum__card { border: 0; border-radius: 0; background: none; padding: 0; }
 .setwiz__stage .setsum__delivery { margin-top: 1.15rem; }
+/* calmer step transitions: drop the staggered per-child rise (busy on the tall
+   option grids) and use one gentle height motion when a step opens/collapses. */
+.setwiz .stepr__item.is-active .stepr__pad > * { opacity: 1; transform: none; animation: none !important; }
+.setwiz .stepr__body { transition: grid-template-rows .26s ease; }
 
 /* ---- shared finish rail ---- */
 .setfin { position: relative; background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); padding: 1.3rem 1.4rem 1.4rem; }
@@ -212,7 +216,7 @@
   box-shadow: 0 0.7rem 1.4rem -0.75rem rgba(10,20,20,0.32), 0 0 1rem -0.15rem color-mix(in srgb, var(--tstr-glow, transparent) 30%, transparent); }
 .cfg-tstr:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
 .cfg-tstr.is-selected { border-color: var(--color-teal);
-  box-shadow: inset 0 0 0 1px var(--color-teal), 0 0.85rem 1.7rem -0.8rem color-mix(in srgb, var(--tstr-glow, var(--color-teal)) 60%, transparent); }
+  box-shadow: inset 0 0 0 1px var(--color-teal), 0 0.4rem 0.85rem -0.7rem color-mix(in srgb, var(--tstr-glow, var(--color-teal)) 28%, transparent); }
 
 /* seamless white stage — the photo's white background melts into it (no box).
    isolation:isolate makes the stage its own stacking context, so the multiply

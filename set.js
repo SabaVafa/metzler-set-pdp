@@ -276,7 +276,23 @@
     var h = item.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'true'); }
   function toggleStep(el, item) { var was = item.classList.contains('is-active'); collapseSteps(el); if (!was) openStep(item); }
   function advanceStep(el, item) { collapseSteps(el); var nx = item && item.nextElementSibling;
-    if (nx && nx.classList.contains('stepr__item')) openStep(nx); }
+    if (nx && nx.classList.contains('stepr__item')) { openStep(nx); scrollStepIntoView(item, nx); } }
+  /* after auto-advance, land precisely on the new step: wait for the accordion
+     collapse/expand to settle (its grid-rows transition), then bring the step head
+     just below the sticky site-header + progress dock. */
+  function scrollStepIntoView(prevItem, nextItem) {
+    var head = nextItem.querySelector('.stepr__head') || nextItem, done = false;
+    var run = function () {
+      if (done) return; done = true;
+      var header = document.querySelector('.header'), dock = document.getElementById('setSteps');
+      var off = (header ? header.getBoundingClientRect().height : 0) + (dock ? dock.getBoundingClientRect().height : 0) + 14;
+      window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: 'smooth' });
+    };
+    var body = prevItem && prevItem.querySelector('.stepr__body');
+    if (body) { var onEnd = function (ev) { if (ev.propertyName === 'grid-template-rows') { body.removeEventListener('transitionend', onEnd); run(); } };
+      body.addEventListener('transitionend', onEnd); }
+    setTimeout(run, 520);   /* fallback + reduced-motion (transition may not fire) */
+  }
 
   function renderPanel(k) {
     var p = PRODUCTS[k], el = document.getElementById('prod' + k.toUpperCase());
