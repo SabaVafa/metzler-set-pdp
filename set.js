@@ -300,14 +300,9 @@
       (k === 'b'
         ? '<button type="button" class="setwiz__back" data-wizprev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Türklingel</button>'
         : '<span class="setwiz__spacer"></span>') +
-      '<button type="button" class="setwiz__total" id="wiztoggle-' + k + '" data-pricetoggle aria-expanded="false" aria-controls="setdt-' + k + '">' +
-        '<span class="setwiz__totallbl" id="wiztotal-' + k + '"></span>' +
-        '<span class="setwiz__detailscue"><span class="setwiz__detailstxt">Preisdetails</span>' +
-          '<svg class="setwiz__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>' +
-      '</button>' +
       '<button type="button" class="setwiz__next" data-wiznext>' + (k === 'a' ? 'Weiter zum Briefkasten' : 'Weiter zur Übersicht') + '</button>' +
       '</div>' +
-      '<div class="setwiz__details" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>' +
+      '<div class="setwiz__details is-open" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>' +
       '<div class="setwiz__buy">' + buyRow('stepcta-' + k, '') + '</div>';
     el.innerHTML =
       '<div class="setprod__inner"><div class="setprod__head"><img class="setprod__img" src="' + p.img + '" alt="' + esc(p.name) + '">' +
@@ -499,10 +494,9 @@
       '</div>';
   }
   function refreshWizTotals() {
-    var sub = (productTotal('a') + productTotal('b')) * state.qty, ready = bothChosen(), total = ready ? sub * (1 - SET_DISCOUNT) : sub;
+    var ready = bothChosen();
     var breakdown = priceBreakdown();
     ['a', 'b'].forEach(function (k) {
-      var el = document.getElementById('wiztotal-' + k); if (el) el.innerHTML = 'Set gesamt · <b>' + eur(total) + '</b>';
       var dt = document.getElementById('setdtbody-' + k); if (dt) dt.innerHTML = breakdown;
       var cta = document.getElementById('stepcta-' + k); if (cta) cta.textContent = ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen';
       var row = document.querySelector('#prod' + k.toUpperCase() + ' .setbuy__row');
@@ -520,9 +514,6 @@
   if (cfgRoot) cfgRoot.addEventListener('click', function (e) {
     var tab = e.target.closest('#setSteps .cfgb-bar__step');
     if (tab) { showStep(tab.getAttribute('data-step'), true); return; }
-    var pt = e.target.closest('[data-pricetoggle]');
-    if (pt) { var open = pt.getAttribute('aria-expanded') === 'true'; pt.setAttribute('aria-expanded', open ? 'false' : 'true');
-      var body = document.getElementById(pt.getAttribute('aria-controls')); if (body) body.classList.toggle('is-open', !open); return; }
     if (e.target.closest('[data-wiznext]')) { showStep(STEPS[Math.min(stepIndex(currentStepId) + 1, STEPS.length - 1)].id, true); return; }
     if (e.target.closest('[data-wizprev]')) { showStep(STEPS[Math.max(stepIndex(currentStepId) - 1, 0)].id, true); return; }
     var qd = e.target.closest('button[data-qd]');

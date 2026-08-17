@@ -113,27 +113,10 @@
 /* ---- horizontal wizard: one step visible at a time ---- */
 .setcfg .setprod[hidden], .setcfg .setsum[hidden] { display: none !important; }
 /* product-level nav footer (Zurück · running total · Weiter) */
-.setwiz__nav { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setwiz__nav { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.2rem; }
 .setwiz__spacer { flex: 0 0 auto; }
-/* "Set gesamt · X €" is a Preisdetails disclosure toggle — styled as a clear,
-   keyboard-focusable control with an explicit "Preisdetails" affordance. */
-.setwiz__total { flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 0.5rem;
-  font: inherit; font-size: 0.8125rem; color: var(--color-graphite-700); background: none; border: 0;
-  padding: 0.45rem 0.55rem; margin: -0.45rem -0.2rem; border-radius: var(--radius); cursor: pointer; text-align: left;
-  transition: background .15s, color .15s; }
-.setwiz__totallbl { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.setwiz__total b { color: var(--color-digital-black); font-weight: 700; font-variant-numeric: tabular-nums; }
-/* the interactive cue: teal label + chevron, so it visibly reads as expandable */
-.setwiz__detailscue { flex: none; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--color-teal); }
-.setwiz__detailstxt { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-teal) 40%, transparent); text-underline-offset: 0.15rem; }
-.setwiz__total:hover { background: var(--color-teal-50); }
-.setwiz__total:hover .setwiz__detailstxt { text-decoration-color: var(--color-teal); }
-.setwiz__total:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; background: var(--color-teal-50); }
-.setwiz__chev { width: 0.9rem; height: 0.9rem; flex-shrink: 0; transition: transform .3s ease; }
-.setwiz__total[aria-expanded="true"] .setwiz__chev { transform: rotate(180deg); }
-/* collapsible breakdown body (grid-rows animation, single-PDP .cfgb-acc pattern) */
-.setwiz__details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
-.setwiz__details.is-open { grid-template-rows: 1fr; }
+/* price-details breakdown — always shown below the step nav */
+.setwiz__details { display: grid; grid-template-rows: 1fr; }
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
 .setdt { margin-top: 0.9rem; padding: 0.9rem 1rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); }
 .setdt__grp + .setdt__grp { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
@@ -156,7 +139,7 @@
 .setwiz__back svg { width: 1.05rem; height: 1.05rem; }
 .setwiz__back:hover { color: var(--color-teal); }
 /* configuration nav = SECONDARY action (black), mirroring the single PDP .cfgb-nav__fwd */
-.setwiz__next { flex: none; display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-size: 0.9375rem; font-weight: 700; color: #fff;
+.setwiz__next { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-size: 0.9375rem; font-weight: 700; color: #fff;
   background: var(--color-digital-black); border: 0; border-radius: var(--radius); padding: 0.7rem 1.25rem; cursor: pointer;
   transition: background .16s, transform .12s; }
 .setwiz__next::after { content: "→"; font-weight: 400; }
