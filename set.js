@@ -250,11 +250,10 @@
     var stage = c.img
       ? '<span class="cfg-tstr__stage"><img src="' + c.img + '" alt="' + esc(c.label) + '" loading="lazy"></span>'
       : '<span class="cfg-tstr__stage cfg-tstr__stage--icon">' + (MOUNT_ICON[c.icon] || '') + '</span>';
-    /* additional-info affordance: (i) with a tooltip on hover/tap describing the option.
-       Decorative for AT (the text is folded into the card's aria-label via cardOpen). */
+    /* additional-info glyph (non-interactive for now; the text is folded into the
+       card's aria-label via cardOpen). */
     var info = !c.info ? '' :
-      '<span class="cfg-tstr__info" data-info aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>' +
-      '<span class="cfg-tstr__tip" aria-hidden="true">' + esc(c.info) + '</span>';
+      '<span class="cfg-tstr__info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.25"/><path d="M12 16.5v-5.5"/><path d="M12 7.75h.01"/></svg></span>';
     return cardOpen(k, o, c, 'cfg-photo') + info + stage + cardMeta(c) + '</button>';
   }
   var SIZE_IMG = 'assets/size/stella-plate.webp';
@@ -360,9 +359,6 @@
       refreshSummary(); refreshPick(k); });
     el.addEventListener('click', function (e) {
       var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }
-      var infoEl = e.target.closest('[data-info]');
-      el.querySelectorAll('.cfg-tstr__info.is-open').forEach(function (x) { if (x !== infoEl) x.classList.remove('is-open'); });
-      if (infoEl) { e.preventDefault(); infoEl.classList.toggle('is-open'); return; }   /* info icon: toggle tooltip, never select */
       var opt = e.target.closest('.cfg-opt[data-opt]');
       if (opt) {
         var oid = opt.getAttribute('data-opt'), val = opt.getAttribute('data-val');

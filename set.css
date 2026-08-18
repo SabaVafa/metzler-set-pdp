@@ -257,7 +257,7 @@
 
 /* selection control (top-LEFT), always visible: checkbox (square) for OPTIONAL,
    radio (circle) for REQUIRED — fills teal when selected. Matches the live PDP. */
-.cfg-tstr__check { position: absolute; top: 0.6rem; left: 0.6rem; z-index: 3; width: 1.3rem; height: 1.3rem; border-radius: 0.35rem;
+.cfg-tstr__check { position: absolute; top: 0.8rem; left: 0.8rem; z-index: 3; width: 1.3rem; height: 1.3rem; border-radius: 0.35rem;
   box-sizing: border-box; border: 2px solid var(--color-graphite-300); background: var(--color-white);
   display: grid; place-items: center; color: #fff; transition: border-color .15s ease, background .15s ease; }
 .cfg-tstr.is-required .cfg-tstr__check { border-radius: 50%; }
@@ -269,20 +269,23 @@
 .cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check { background: var(--color-teal); }
 .cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check svg { opacity: 1; }
 .cfg-tstr.is-required.is-selected .cfg-tstr__check::after { transform: scale(1); }
+/* check animation on selection: the box pops and the tick strokes itself in */
+.cfg-tstr__check svg path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check { animation: cfg-check-pop .28s cubic-bezier(.2,.9,.3,1.5); }
+.cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check svg path { animation: cfg-check-draw .3s .06s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes cfg-check-draw { to { stroke-dashoffset: 0; } }
+@keyframes cfg-check-pop { 0% { transform: scale(0.8); } 55% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .cfg-tstr__check svg path { stroke-dashoffset: 0; }
+  .cfg-tstr.is-required .cfg-tstr__check::after { transition: none; }
+  .cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check,
+  .cfg-tstr.is-selected:not(.is-required) .cfg-tstr__check svg path { animation: none; }
+}
 
-/* additional-info (i) affordance + tooltip (top-RIGHT; Montage cards) */
-.cfg-tstr__info { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 4; width: 1.35rem; height: 1.35rem; border-radius: 50%;
-  display: grid; place-items: center; color: var(--color-graphite-600); background: var(--color-white);
-  box-shadow: 0 0 0 1px var(--color-graphite-200); cursor: help; transition: color .15s ease, box-shadow .15s ease; }
-.cfg-tstr__info svg { width: 1rem; height: 1rem; }
-.cfg-tstr__info:hover, .cfg-tstr__info.is-open { color: var(--color-teal); box-shadow: 0 0 0 1px var(--color-teal); }
-.cfg-tstr__tip { position: absolute; top: 2.15rem; left: 0.5rem; right: 0.5rem; z-index: 20;
-  padding: 0.5rem 0.6rem; border-radius: var(--radius); background: var(--color-digital-black); color: #fff;
-  font-size: 0.7rem; font-weight: 400; line-height: 1.35; letter-spacing: 0; text-align: left;
-  opacity: 0; visibility: hidden; transform: translateY(-0.25rem); pointer-events: none;
-  box-shadow: 0 0.5rem 1.2rem -0.4rem rgba(10,20,20,0.5);
-  transition: opacity .16s ease, transform .16s ease, visibility .16s ease; }
-.cfg-tstr__info:hover ~ .cfg-tstr__tip, .cfg-tstr__info.is-open ~ .cfg-tstr__tip { opacity: 1; visibility: visible; transform: translateY(0); }
+/* additional-info glyph (top-RIGHT; Montage) — box-less, brand teal, non-interactive */
+.cfg-tstr__info { position: absolute; top: 0.7rem; right: 0.7rem; z-index: 4; width: 1.35rem; height: 1.35rem;
+  display: grid; place-items: center; color: var(--color-teal); pointer-events: none; }
+.cfg-tstr__info svg { width: 100%; height: 100%; }
 
 /* ---- Größe · real Stella product photo, scaled proportionally to the cm value.
    Uses the shared 3-up grid (4 items → 3 + 1) so cards match the other sections. ---- */
