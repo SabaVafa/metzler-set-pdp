@@ -29,10 +29,14 @@
     a: { key: 'a', name: 'Türklingel „Stella"', sub: 'mit Gravur + LED-Taster · Art. 35875', base: 24.99,
       img: 'Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp',
       options: [
-        { id: 'size', label: 'Größe', type: 'radio', variant: 'size', required: true, def: '8', choices: [
-          { v: '6', label: '6 × 6 cm', sub: 'Kompakt', d: 0 }, { v: '8', label: '8 × 8 cm', sub: 'Standard', d: 6 },
-          { v: '10', label: '10 × 10 cm', sub: 'Groß', d: 12 }, { v: '11', label: '11 × 11 cm', sub: 'XL', d: 18 } ] },
-        { id: 'led', label: 'LED-Taster', type: 'radio', variant: 'taster', def: 'no', choices: [
+        { id: 'size', label: 'Größe', type: 'radio', variant: 'size', required: true, def: '', choices: [
+          { v: '6',  label: '6 × 6 cm',   sub: 'Mini',     d: 0 },
+          { v: '7',  label: '7 × 7 cm',   sub: 'Kompakt',  d: 0 },
+          { v: '8',  label: '8 × 8 cm',   sub: 'Standard', d: 0 },
+          { v: '9',  label: '9 × 9 cm',   sub: 'Komfort',  d: 1.89 },
+          { v: '10', label: '10 × 10 cm', sub: 'Groß',     d: 2.89 },
+          { v: '11', label: '11 × 11 cm', sub: 'XL',       d: 4.89 } ] },
+        { id: 'led', label: 'LED-Taster', type: 'radio', variant: 'taster', def: '', choices: [
           { v: 'no',     label: 'Ohne Beleuchtung', sub: 'Gebürsteter Edelstahl', d: 0,  img: 'assets/taster/taster-none.webp',   glow: null },
           { v: 'white',  label: 'LED Weiß',          sub: 'Neutralweißer Ring',   d: 14, img: 'assets/taster/taster-white.webp',  glow: '#dfe4ea' },
           { v: 'blue',   label: 'LED Blau',          sub: 'Kühles Blau',          d: 14, img: 'assets/taster/taster-blue.webp',   glow: '#2f6bff' },
@@ -43,13 +47,13 @@
     b: { key: 'b', name: 'Briefkasten „Siebert"', sub: 'hochwertiger Stahl · 37 × 37 × 10,5 cm · Art. 36621', base: 76.49,
       img: 'Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp',
       options: [
-        { id: 'mount', label: 'Montage', type: 'radio', variant: 'photo', def: 'wall', choices: [
-          { v: 'wall',     label: 'Wandmontage',      sub: 'An der Wand',        d: 0,  img: 'assets/mount/mount-ral7016.webp' },
-          { v: 'complete', label: 'Standbriefkasten', sub: 'Komplett mit Rahmen', d: 89, img: 'assets/mount/mount-edelstahl.webp' },
-          { v: 'ral7016',  label: 'Universal-Rahmen', sub: 'Anthrazit RAL 7016', d: 59, img: 'assets/mount/mount-ral7016.webp' },
-          { v: '2er',      label: '2er-Rahmen',       sub: 'Edelstahl gebürstet', d: 69, img: 'assets/mount/mount-2er.webp' },
-          { v: 'v2a',      label: 'V2A-Rahmen',       sub: 'Edelstahl rostfrei',  d: 79, img: 'assets/mount/mount-v2a.webp' },
-          { v: 'pole',     label: 'Einbeton-Pfosten', sub: 'Zum Einbetonieren',   d: 49, img: 'assets/mount/mount-pole.webp' } ] },
+        { id: 'mount', label: 'Montage', type: 'radio', variant: 'photo', def: '', choices: [
+          { v: 'wall',     label: 'Wandmontage',      sub: 'An der Wand',        d: 0,  img: 'assets/mount/mount-ral7016.webp', info: 'Direkte Wandmontage – Befestigungsmaterial ist inklusive. Kein Standrahmen nötig.' },
+          { v: 'complete', label: 'Standbriefkasten', sub: 'Komplett mit Rahmen', d: 89, img: 'assets/mount/mount-edelstahl.webp', info: 'Kompletter Standbriefkasten inkl. Edelstahl-Standrahmen – frei aufstellbar.' },
+          { v: 'ral7016',  label: 'Universal-Rahmen', sub: 'Anthrazit RAL 7016', d: 59, img: 'assets/mount/mount-ral7016.webp', info: 'Universeller Standrahmen in Anthrazit (RAL 7016) zum Anschrauben.' },
+          { v: '2er',      label: '2er-Rahmen',       sub: 'Edelstahl gebürstet', d: 69, img: 'assets/mount/mount-2er.webp', info: 'Zweibeiniger Standrahmen aus gebürstetem Edelstahl – stabil und wetterfest.' },
+          { v: 'v2a',      label: 'V2A-Rahmen',       sub: 'Edelstahl rostfrei',  d: 79, img: 'assets/mount/mount-v2a.webp', info: 'Standrahmen aus rostfreiem V2A-Edelstahl, ideal für den Außenbereich.' },
+          { v: 'pole',     label: 'Einbeton-Pfosten', sub: 'Zum Einbetonieren',   d: 49, img: 'assets/mount/mount-pole.webp', info: 'Pfosten zum Einbetonieren – für besonders stabilen, dauerhaften Stand.' } ] },
         { id: 'gravur', label: 'Namensgravur', type: 'text', placeholder: 'z. B. Voßberg', hint: 'inklusive', d: 0 } ] }
   };
 
@@ -218,7 +222,7 @@
   /* ---- premium visual option cards — one shared system (.cfg-tstr card chrome:
      border, hover lift, teal selected state, check badge). Each variant swaps only
      the "stage" (the visual): a product photo (taster/photo) or a CSS render (size). ---- */
-  var OPT_CHECK = '<span class="cfg-tstr__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
+  var OPT_CHECK = '<span class="cfg-tstr__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M20 6L9 17l-5-5"/></svg></span>';
   var MOUNT_ICON = {
     wall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="7" y="5" width="10" height="11" rx="1.2"/><path d="M9 16v4M15 16v4M9.5 9h5M9.5 12h5"/></svg>',
     stand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3.5" width="12" height="9" rx="1.2"/><path d="M8.5 8h7"/><path d="M12 12.5V21M9 21h6"/></svg>'
@@ -231,7 +235,10 @@
     return '<span class="cfg-tstr__meta"><span class="cfg-tstr__name">' + esc(c.label) + '</span>' + sub + price + '</span>';
   }
   function cardOpen(k, o, c, cls, style) {
-    return '<button type="button" class="cfg-opt cfg-tstr ' + cls + '" role="radio" aria-checked="false" aria-label="' + esc(c.label) +
+    /* full accessible name: name · descriptor · price — so screen readers announce
+       everything the card shows, not just the title. */
+    var a11y = c.label + (c.sub ? ', ' + c.sub : '') + ', ' + (c.d ? '+ ' + eur(c.d) : 'inklusive') + (c.info ? '. ' + c.info : '');
+    return '<button type="button" class="cfg-opt cfg-tstr ' + cls + (o.required ? ' is-required' : '') + '" role="radio" aria-checked="false" aria-label="' + esc(a11y) +
       '" data-opt="' + o.id + '" data-val="' + c.v + '"' + (style || '') + '>' + OPT_CHECK;
   }
   function tasterCard(k, o, c) {
@@ -243,7 +250,12 @@
     var stage = c.img
       ? '<span class="cfg-tstr__stage"><img src="' + c.img + '" alt="' + esc(c.label) + '" loading="lazy"></span>'
       : '<span class="cfg-tstr__stage cfg-tstr__stage--icon">' + (MOUNT_ICON[c.icon] || '') + '</span>';
-    return cardOpen(k, o, c, 'cfg-photo') + stage + cardMeta(c) + '</button>';
+    /* additional-info affordance: (i) with a tooltip on hover/tap describing the option.
+       Decorative for AT (the text is folded into the card's aria-label via cardOpen). */
+    var info = !c.info ? '' :
+      '<span class="cfg-tstr__info" data-info aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>' +
+      '<span class="cfg-tstr__tip" aria-hidden="true">' + esc(c.info) + '</span>';
+    return cardOpen(k, o, c, 'cfg-photo') + info + stage + cardMeta(c) + '</button>';
   }
   var SIZE_IMG = 'assets/size/stella-plate.webp';
   function sizeCard(k, o, c) {
@@ -272,16 +284,27 @@
     if (o.variant === 'photo')  return optGrid('cfg-photo-grid',  o.label, o, function (c) { return photoCard(k, o, c); });
     return '<div class="cfg-opts" role="radiogroup" aria-label="' + esc(o.label) + '">' + o.choices.map(function (c) { return optRow(k, o, c); }).join('') + '</div>';
   }
+  /* a step counts as "done" (green check) only when it actually holds a value —
+     not merely because it was visited/collapsed. */
+  function hasStepValue(k, o) { return o.type === 'text' ? !!(state[k][o.id] || '').trim() : !!state[k][o.id]; }
+  function paintStepStatus(el) {
+    if (!el) return; var k = el.id === 'prodB' ? 'b' : 'a';
+    el.querySelectorAll('.stepr__item').forEach(function (item) {
+      if (item.classList.contains('is-active')) { item.classList.remove('is-done'); return; }
+      var o = PRODUCTS[k].options.filter(function (x) { return x.id === item.getAttribute('data-optstep'); })[0];
+      item.classList.toggle('is-done', !!o && hasStepValue(k, o));
+    });
+  }
   function collapseSteps(el) {
-    el.querySelectorAll('.stepr__item').forEach(function (it) { it.classList.remove('is-active'); it.classList.add('is-done');
+    el.querySelectorAll('.stepr__item').forEach(function (it) { it.classList.remove('is-active');
       var h = it.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'false'); });
   }
   function openStep(item) { if (!item) return; item.classList.add('is-active'); item.classList.remove('is-done');
     var h = item.querySelector('.stepr__head'); if (h) h.setAttribute('aria-expanded', 'true'); }
   function toggleStep(el, item) { var was = item.classList.contains('is-active'), prev = el.querySelector('.stepr__item.is-active');
-    collapseSteps(el); if (!was) { openStep(item); scrollStepIntoView(prev, item); } }
+    collapseSteps(el); if (!was) { openStep(item); scrollStepIntoView(prev, item); } paintStepStatus(el); }
   function advanceStep(el, item) { collapseSteps(el); var nx = item && item.nextElementSibling;
-    if (nx && nx.classList.contains('stepr__item')) { openStep(nx); scrollStepIntoView(item, nx); } }
+    if (nx && nx.classList.contains('stepr__item')) { openStep(nx); scrollStepIntoView(item, nx); } paintStepStatus(el); }
   /* after auto-advance, land precisely on the new step: wait for the accordion
      collapse/expand to settle (its grid-rows transition), then bring the step head
      just below the sticky site-header + progress dock. */
@@ -303,8 +326,8 @@
     var p = PRODUCTS[k], el = document.getElementById('prod' + k.toUpperCase());
     var steps = p.options.map(function (o, i) {
       var incl = (o.type === 'text' && o.hint) ? ' <span class="setopt__incl">' + esc(o.hint) + '</span>' : '';
-      return '<li class="stepr__item' + (i === 0 ? ' is-active' : ' is-done') + '" data-optstep="' + o.id + '">' +
-        '<button class="stepr__head" type="button" aria-expanded="' + (i === 0 ? 'true' : 'false') + '">' +
+      return '<li class="stepr__item" data-optstep="' + o.id + '">' +
+        '<button class="stepr__head" type="button" aria-expanded="false">' +
           '<span class="stepr__node"><span class="stepr__num">' + (i + 1) + '</span><svg class="stepr__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>' +
           '<span class="stepr__titles"><span class="stepr__title">' + esc(o.label) + incl + '</span><span class="stepr__pick" id="pick-' + k + '-' + o.id + '"></span></span>' +
           '<span class="stepr__edit">Ändern</span>' +
@@ -337,6 +360,9 @@
       refreshSummary(); refreshPick(k); });
     el.addEventListener('click', function (e) {
       var head = e.target.closest('.stepr__head'); if (head) { toggleStep(el, head.closest('.stepr__item')); return; }
+      var infoEl = e.target.closest('[data-info]');
+      el.querySelectorAll('.cfg-tstr__info.is-open').forEach(function (x) { if (x !== infoEl) x.classList.remove('is-open'); });
+      if (infoEl) { e.preventDefault(); infoEl.classList.toggle('is-open'); return; }   /* info icon: toggle tooltip, never select */
       var opt = e.target.closest('.cfg-opt[data-opt]');
       if (opt) {
         var oid = opt.getAttribute('data-opt'), val = opt.getAttribute('data-val');
@@ -344,7 +370,11 @@
         /* optional options toggle off when their selected card is pressed again;
            required options (Größe, Anschluss) always keep a selection. */
         if (odef && !odef.required && state[k][oid] === val) { state[k][oid] = ''; refresh(); return; }
-        state[k][oid] = val; refresh(); advanceStep(el, opt.closest('.stepr__item')); return;
+        state[k][oid] = val; refresh();
+        /* only required steps auto-advance/collapse; optional steps stay open so the
+           user can review or change the choice. */
+        if (odef && odef.required) advanceStep(el, opt.closest('.stepr__item'));
+        return;
       }
       if (k === 'a') { var s = e.target.closest('[data-fina]'); if (s) { state.finishA = s.getAttribute('data-fina'); refresh(); return; }
         if (e.target.id === 'relinkA') { state.diverged = false; state.finishA = state.finishB = (byId(state.finishB) && byId(state.finishB).a ? state.finishB : SHARED[0].id); refresh(); } }
@@ -600,6 +630,7 @@
     update();
   }
 
-  function refresh() { refreshLead(); refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky(); }
+  function refresh() { refreshLead(); refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky();
+    paintStepStatus(document.getElementById('prodA')); paintStepStatus(document.getElementById('prodB')); }
   renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky(); setupStickyDock();
 })();
