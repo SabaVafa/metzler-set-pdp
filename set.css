@@ -2,6 +2,9 @@
    Metzler SET configuration flow – set-specific components, embedded in the
    duplicated PDP's buy box. Uses the shared design tokens from pdp.css.
    ============================================================ */
+/* WCAG AA: the brand green (#1E874B ≈ 3.7:1 on white) fails 4.5:1 for the small
+   "inklusive"/availability text — darken it within the configurator to ≥4.5:1. */
+.setcfg, #pdpStickyBar { --color-green: #1A7A43; }
 .setp-hero__eyebrow { color: var(--color-teal); }
 /* Set title: a clean, confident lockup of the two products – the premium-shop way
    to title a bundle. Brand + "Set" live in the eyebrow; each product's full name
@@ -227,6 +230,12 @@
 .cfg-tstr:hover { transform: translateY(-2px);
   box-shadow: 0 0.7rem 1.4rem -0.75rem rgba(10,20,20,0.32), 0 0 1rem -0.15rem color-mix(in srgb, var(--tstr-glow, transparent) 30%, transparent); }
 .cfg-tstr:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+/* keyboard focus indicators (WCAG 2.4.7) for set-specific controls */
+.stepr__head:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -3px; border-radius: var(--radius-lg); }
+.setwiz__back:focus-visible, .setprod__relink:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; border-radius: var(--radius); }
+.cfgb-buyrow__qty button:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -3px; }
+.setfin .pdp-swatch:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 3px; }
+.setsum__cta:focus-visible { outline: 2px solid var(--color-digital-black); outline-offset: 2px; }   /* dark ring on the teal CTA */
 .cfg-tstr.is-selected { border-color: var(--color-teal);
   box-shadow: inset 0 0 0 1px var(--color-teal), 0 0.4rem 0.85rem -0.7rem color-mix(in srgb, var(--tstr-glow, var(--color-teal)) 28%, transparent); }
 
@@ -258,7 +267,7 @@
 /* selection control (top-LEFT), always visible: checkbox (square) for OPTIONAL,
    radio (circle) for REQUIRED — fills teal when selected. Matches the live PDP. */
 .cfg-tstr__check { position: absolute; top: 0.8rem; left: 0.8rem; z-index: 3; width: 1.3rem; height: 1.3rem; border-radius: 0.35rem;
-  box-sizing: border-box; border: 2px solid var(--color-graphite-300); background: var(--color-white);
+  box-sizing: border-box; border: 2px solid var(--color-graphite-600); background: var(--color-white);
   display: grid; place-items: center; color: #fff; transition: border-color .15s ease, background .15s ease; }
 .cfg-tstr.is-required .cfg-tstr__check { border-radius: 50%; }
 .cfg-tstr__check svg { width: 0.82rem; height: 0.82rem; opacity: 0; transition: opacity .12s ease; }

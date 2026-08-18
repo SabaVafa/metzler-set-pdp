@@ -61,6 +61,8 @@
   ['a', 'b'].forEach(function (k) { PRODUCTS[k].options.forEach(function (o) { state[k][o.id] = o.type === 'radio' ? o.def : ''; }); });
 
   var clamp = function (n, lo, hi) { return Math.max(lo, Math.min(hi, n)); };
+  /* respect prefers-reduced-motion for programmatic scrolling (WCAG 2.3.3) */
+  var scrollBehavior = function () { return (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth'; };
   var eur = function (n) { return n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
   var swatchStyle = function (f) { return f.img ? "background-image:url('" + f.img + "')" : 'background:' + (f.chip || '#ccc'); };
@@ -313,7 +315,7 @@
       if (done) return; done = true;
       var header = document.querySelector('.header'), dock = document.getElementById('setSteps');
       var off = (header ? header.getBoundingClientRect().height : 0) + (dock ? dock.getBoundingClientRect().height : 0) + 14;
-      window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: 'smooth' });
+      window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: scrollBehavior() });
     };
     var body = prevItem && prevItem.querySelector('.stepr__body');
     if (body) { var onEnd = function (ev) { if (ev.propertyName === 'grid-template-rows') { body.removeEventListener('transitionend', onEnd); run(); } };
@@ -522,7 +524,7 @@
       var wiz = document.querySelector('.setwiz'), header = document.querySelector('.header');
       if (wiz) {
         var offset = (header ? Math.round(header.getBoundingClientRect().height) : 65) + 10;
-        window.scrollTo({ top: Math.max(0, wiz.getBoundingClientRect().top + window.scrollY - offset), behavior: 'smooth' });
+        window.scrollTo({ top: Math.max(0, wiz.getBoundingClientRect().top + window.scrollY - offset), behavior: scrollBehavior() });
       }
     }
   }
@@ -587,7 +589,7 @@
       var sw = document.getElementById('setfinSwatches');
       if (sw) { sw.classList.remove('is-invalid'); void sw.offsetWidth; sw.classList.add('is-invalid'); }
       var s = document.getElementById('setfin');
-      if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (s) { s.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
         s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); }
       return;
     }
