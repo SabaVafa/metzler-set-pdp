@@ -43,7 +43,7 @@
           { v: 'red',    label: 'LED Rot',           sub: 'Signalrot',            d: 14, img: 'assets/taster/taster-red.webp',    glow: '#e5322d' },
           { v: 'green',  label: 'LED Grün',          sub: 'Frisches Grün',        d: 14, img: 'assets/taster/taster-green.webp',  glow: '#3fbf4f' },
           { v: 'yellow', label: 'LED Gelb',          sub: 'Warmes Gelb',          d: 14, img: 'assets/taster/taster-yellow.webp', glow: '#f5c518' } ] },
-        { id: 'gravur', label: 'Gravur (Name)', type: 'text', placeholder: 'z. B. Familie Voßberg', hint: 'inklusive', d: 0 } ] },
+        { id: 'gravur', label: 'Gravurdaten', type: 'text', placeholder: 'z. B. Familie Voßberg', hint: 'inklusive', d: 0 } ] },
     b: { key: 'b', name: 'Briefkasten „Siebert"', sub: 'hochwertiger Stahl · 37 × 37 × 10,5 cm · Art. 36621', base: 76.49,
       img: 'Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp',
       options: [
@@ -512,7 +512,6 @@
     var s = STEPS[cur];
     var n = document.getElementById('setStepN'); if (n) n.textContent = 'Schritt ' + (cur + 1) + ' von ' + STEPS.length;
     var nm = document.getElementById('setStepName'); if (nm) nm.textContent = s.label;
-    var fl = document.getElementById('setStepFlag'); if (fl) { fl.textContent = s.flag; fl.classList.toggle('is-opt', !!s.opt); }
   }
   function showStep(id, scroll) {
     if (stepIndex(id) < 0) id = 'prodA';
@@ -541,7 +540,6 @@
       '<div class="cfgb-dock__title" role="status" aria-live="polite">' +
         '<span class="cfgb-dock__titletext"><span class="cfgb-dock__n" id="setStepN"></span>' +
         '<span class="cfgb-dock__name"><span id="setStepName"></span></span></span>' +
-        '<span class="cfgb-dock__flag" id="setStepFlag"></span>' +
       '</div>';
   }
   function refreshWizTotals() {
