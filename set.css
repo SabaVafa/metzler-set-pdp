@@ -114,7 +114,12 @@
 .setprod__id { flex: 1 1 auto; min-width: 0; }
 .setprod__cap { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-teal); }
 .setprod__name { margin: 0.15rem 0; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-digital-black); }
-.setprod__sub { margin: 0; font-size: 0.75rem; color: var(--color-graphite-600); }
+/* product spec/meta line (Material · Maße · Art-Nr.) — key at-a-glance details,
+   so keep them clearly legible: larger + darker than a muted caption. The facts
+   carry the weight; the middot separators recede so each fact reads as its own
+   scannable chunk. */
+.setprod__sub { margin: 0.15rem 0 0; font-size: 0.875rem; font-weight: 500; line-height: 1.5; color: var(--color-graphite-700); }
+.setprod__subsep { font-weight: 400; color: var(--color-graphite-400); }
 .setprod__price { flex: none; display: flex; flex-direction: column; align-items: flex-end; }
 .setprod__pricecap { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-graphite-500); }
 .setprod__price b { font-size: 1.25rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; }
@@ -122,6 +127,39 @@
 /* per-product configurator: the single-product .stepr accordion (styling from
    pdp-b.css); here we only space it. */
 .setprod__steps { margin-top: 1.25rem; }
+
+/* ============================================================
+   Configurator step rows — a scannable settings-list hierarchy.
+   Goal: at a glance the eye triages what MUST be done (Pflicht) vs what
+   can be skipped (Optional) vs what's already settled (done). Three cues
+   move together per state: the value-line tone, the number badge, and a
+   right-side meta chip that sits in the same slot on every row (rhythm).
+   Scoped to .setprod__steps so the base .stepr component is untouched.
+   ============================================================ */
+/* two-tier type: title is the clear primary, value the secondary */
+.setprod__steps .stepr__titles { gap: 0.22rem; }
+.setprod__steps .stepr__title { font-size: 0.9375rem; letter-spacing: -0.01em; }
+.setprod__steps .stepr__pick { font-size: 0.8125rem; }
+
+/* value-line triage (collapsed, not-yet-open rows) */
+.setprod__steps .stepr__item.is-req:not(.is-done):not(.is-active) .stepr__pick { color: var(--color-teal); font-weight: 700; }
+.setprod__steps .stepr__item.is-opt:not(.is-done):not(.is-active) .stepr__pick { color: var(--color-graphite-600); font-weight: 500; }
+.setprod__steps .stepr__item.is-done .stepr__pick { color: var(--color-digital-black); font-weight: 600; }
+
+/* required-but-empty badge: a quiet teal ring + teal numeral says "start here",
+   distinct from the active state (which fills teal-50 with a halo) and done (solid) */
+.setprod__steps .stepr__item.is-req:not(.is-done):not(.is-active) .stepr__node { box-shadow: inset 0 0 0 1.5px rgba(1,82,83,0.4); }
+.setprod__steps .stepr__item.is-req:not(.is-done):not(.is-active) .stepr__num { color: var(--color-teal); }
+
+/* right-side meta chip — one consistent slot per row for a calm scan rhythm */
+.setprod__steps .stepr__meta { flex-shrink: 0; font-size: 0.625rem; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; line-height: 1.2; padding: 0.18rem 0.5rem; border-radius: var(--radius-pill); white-space: nowrap; }
+.setprod__steps .stepr__meta--req  { color: var(--color-teal); background: var(--color-teal-50); }
+.setprod__steps .stepr__meta--incl { color: var(--color-green); background: var(--color-green-50, #eaf6ee); }
+.setprod__steps .stepr__meta--opt  { color: var(--color-graphite-600); background: var(--color-graphite-100); }
+/* the chip yields to the open/expand + "Ändern" affordances once acted on */
+.setprod__steps .stepr__item.is-active .stepr__meta,
+.setprod__steps .stepr__item.is-done .stepr__meta { display: none; }
 
 /* ---- horizontal wizard: one step visible at a time ---- */
 .setcfg .setprod[hidden], .setcfg .setsum[hidden] { display: none !important; }
@@ -271,7 +309,9 @@
 /* selection control (top-LEFT), always visible: checkbox (square) for OPTIONAL,
    radio (circle) for REQUIRED — fills teal when selected. Matches the live PDP. */
 .cfg-tstr__check { position: absolute; top: 0.8rem; left: 0.8rem; z-index: 3; width: 1.3rem; height: 1.3rem; border-radius: 0.35rem;
-  box-sizing: border-box; border: 2px solid var(--color-graphite-600); background: var(--color-white);
+  /* softer than graphite-600 per request, but #8C8C8C is ~3.4:1 on white — the
+     WCAG 1.4.11 (3:1) floor for the control boundary. Do NOT lighten further. */
+  box-sizing: border-box; border: 2px solid #8C8C8C; background: var(--color-white);
   display: grid; place-items: center; color: #fff; transition: border-color .15s ease, background .15s ease; }
 .cfg-tstr.is-required .cfg-tstr__check { border-radius: 50%; }
 .cfg-tstr__check svg { width: 0.82rem; height: 0.82rem; opacity: 0; transition: opacity .12s ease; }

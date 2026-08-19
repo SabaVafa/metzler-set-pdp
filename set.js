@@ -326,11 +326,20 @@
   function renderPanel(k) {
     var p = PRODUCTS[k], el = document.getElementById('prod' + k.toUpperCase());
     var steps = p.options.map(function (o, i) {
-      var incl = (o.type === 'text' && o.hint) ? ' <span class="setopt__incl">' + esc(o.hint) + '</span>' : '';
-      return '<li class="stepr__item" data-optstep="' + o.id + '">' +
+      /* state → right-side meta slot, same on every row for rhythm:
+         required (Pflicht) pops · included freebie (inklusive) · else Optional */
+      var isReq = !!o.required, isIncl = (o.type === 'text' && !!o.hint);
+      var metaCls = isReq ? ' is-req' : ' is-opt';
+      var metaChip = isReq
+        ? '<span class="stepr__meta stepr__meta--req">Pflicht</span>'
+        : isIncl
+          ? '<span class="stepr__meta stepr__meta--incl">' + esc(o.hint) + '</span>'
+          : '<span class="stepr__meta stepr__meta--opt">Optional</span>';
+      return '<li class="stepr__item' + metaCls + '" data-optstep="' + o.id + '">' +
         '<button class="stepr__head" type="button" aria-expanded="false">' +
           '<span class="stepr__node"><span class="stepr__num">' + (i + 1) + '</span><svg class="stepr__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>' +
-          '<span class="stepr__titles"><span class="stepr__title">' + esc(o.label) + incl + '</span><span class="stepr__pick" id="pick-' + k + '-' + o.id + '"></span></span>' +
+          '<span class="stepr__titles"><span class="stepr__title">' + esc(o.label) + '</span><span class="stepr__pick" id="pick-' + k + '-' + o.id + '"></span></span>' +
+          metaChip +
           '<span class="stepr__edit">Ändern</span>' +
           '<svg class="stepr__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
         '</button>' +
@@ -352,7 +361,7 @@
     el.innerHTML =
       '<div class="setprod__inner"><div class="setprod__head"><img class="setprod__img" src="' + p.img + '" alt="' + esc(p.name) + '">' +
       '<div class="setprod__id"><span class="setprod__cap">' + (k === 'a' ? 'Produkt 1' : 'Produkt 2') + '</span>' +
-      '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub) + '</p></div>' +
+      '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub).split(' · ').join('<span class="setprod__subsep"> · </span>') + '</p></div>' +
       '<div class="setprod__price" id="price' + k + '"></div></div>' + sep +
       '<ol class="stepr setprod__steps">' + steps + '</ol>' + nav + '</div>';
     el.addEventListener('change', function (e) { var t = e.target; if (!t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refresh(); });
