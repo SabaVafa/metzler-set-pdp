@@ -326,21 +326,16 @@
   function renderPanel(k) {
     var p = PRODUCTS[k], el = document.getElementById('prod' + k.toUpperCase());
     var steps = p.options.map(function (o, i) {
-      /* state → right-side meta slot, same on every row for rhythm:
-         required (Pflicht) pops · included freebie (inklusive) · else Optional */
+      /* No right-side text labels on the collapsed row — hierarchy is carried
+         entirely by colour/border: a teal left spine + teal ring badge marks the
+         required step; optional/included stay neutral; done fills the badge with
+         a check and reveals the chosen value under the title. */
       var isReq = !!o.required, isIncl = (o.type === 'text' && !!o.hint);
-      var metaCls = isReq ? ' is-req' : ' is-opt';
-      var metaChip = isReq
-        ? '<span class="stepr__meta stepr__meta--req">Pflicht</span>'
-        : isIncl
-          ? '<span class="stepr__meta stepr__meta--incl">' + esc(o.hint) + '</span>'
-          : '<span class="stepr__meta stepr__meta--opt">Optional</span>';
-      return '<li class="stepr__item' + metaCls + '" data-optstep="' + o.id + '">' +
+      var stateCls = isReq ? ' is-req' : (isIncl ? ' is-incl' : ' is-opt');
+      return '<li class="stepr__item' + stateCls + '" data-optstep="' + o.id + '">' +
         '<button class="stepr__head" type="button" aria-expanded="false">' +
           '<span class="stepr__node"><span class="stepr__num">' + (i + 1) + '</span><svg class="stepr__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>' +
           '<span class="stepr__titles"><span class="stepr__title">' + esc(o.label) + '</span><span class="stepr__pick" id="pick-' + k + '-' + o.id + '"></span></span>' +
-          metaChip +
-          '<span class="stepr__edit">Ändern</span>' +
           '<svg class="stepr__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
         '</button>' +
         '<div class="stepr__body"><div class="stepr__inner"><div class="stepr__pad">' + optBody(k, o) + '</div></div></div>' +
@@ -358,11 +353,10 @@
       '</div>' +
       '<div class="setwiz__details is-open" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>' +
       '<div class="setwiz__buy">' + buyRow('stepcta-' + k, '') + '</div>';
+    /* product identity now lives in the dock heading band (paintDockHeader) —
+       the step body starts straight at the options, no duplicate header row. */
     el.innerHTML =
-      '<div class="setprod__inner"><div class="setprod__head"><img class="setprod__img" src="' + p.img + '" alt="' + esc(p.name) + '">' +
-      '<div class="setprod__id"><span class="setprod__cap">' + (k === 'a' ? 'Produkt 1' : 'Produkt 2') + '</span>' +
-      '<h3 class="setprod__name">' + esc(p.name) + '</h3><p class="setprod__sub">' + esc(p.sub).split(' · ').join('<span class="setprod__subsep"> · </span>') + '</p></div>' +
-      '<div class="setprod__price" id="price' + k + '"></div></div>' + sep +
+      '<div class="setprod__inner">' + sep +
       '<ol class="stepr setprod__steps">' + steps + '</ol>' + nav + '</div>';
     el.addEventListener('change', function (e) { var t = e.target; if (!t.name || t.name.indexOf(k + '-') !== 0) return; state[k][t.name.slice(2)] = t.value; refresh(); });
     el.addEventListener('input', function (e) { var t = e.target; if (t.type !== 'text' || !t.name || t.name.indexOf(k + '-') !== 0) return;
@@ -393,7 +387,6 @@
   function refreshPanel(k) {
     var el = document.getElementById('prod' + k.toUpperCase()), f = finishFor(k);
     el.classList.toggle('is-set', !!f);
-    var pr = document.getElementById('price' + k); if (pr) pr.innerHTML = '<span class="setprod__pricecap">Konfiguriert</span><b>' + eur(productTotal(k)) + '</b>';
     el.querySelectorAll('.cfg-opt[data-opt]').forEach(function (b) {
       var on = state[k][b.getAttribute('data-opt')] === b.getAttribute('data-val');
       b.classList.toggle('is-selected', on); b.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -518,9 +511,30 @@
       b.classList.toggle('is-current', i === cur && !lastDone);/* is-current overrides is-filled in the CSS */
       if (i === cur) b.setAttribute('aria-current', 'step'); else b.setAttribute('aria-current', 'false');
     });
-    var s = STEPS[cur];
-    var n = document.getElementById('setStepN'); if (n) n.textContent = 'Schritt ' + (cur + 1) + ' von ' + STEPS.length;
-    var nm = document.getElementById('setStepName'); if (nm) nm.textContent = s.label;
+    paintDockHeader();
+  }
+  /* the dock heading band shows the active product's identity + live price
+     (Übersicht step shows just its heading, no product/price). */
+  function paintDockHeader() {
+    var k = currentStepId === 'prodA' ? 'a' : (currentStepId === 'prodB' ? 'b' : null);
+    var img = document.getElementById('setHdImg'), cap = document.getElementById('setHdCap'),
+        nm = document.getElementById('setStepName'), sub = document.getElementById('setHdSub'),
+        price = document.getElementById('setHdPrice'), amt = document.getElementById('setHdAmount');
+    if (k) {
+      var p = PRODUCTS[k];
+      if (img) { img.src = p.img; img.alt = p.name; img.hidden = false; }
+      if (cap) { cap.textContent = (k === 'a' ? 'Produkt 1' : 'Produkt 2'); cap.hidden = false; }
+      if (nm) nm.textContent = p.name;
+      if (sub) { sub.innerHTML = esc(p.sub).split(' · ').join('<span class="setprod__subsep"> · </span>'); sub.hidden = false; }
+      if (amt) amt.textContent = eur(productTotal(k));
+      if (price) price.hidden = false;
+    } else {
+      if (img) img.hidden = true;
+      if (cap) cap.hidden = true;
+      if (nm) nm.textContent = 'Übersicht';
+      if (sub) sub.hidden = true;
+      if (price) price.hidden = true;
+    }
   }
   function showStep(id, scroll) {
     if (stepIndex(id) < 0) id = 'prodA';
@@ -546,9 +560,12 @@
             '<span class="cfgb-bar__num">' + (i + 1) + '</span><span class="cfgb-bar__label">' + esc(s.label) + '</span></button>';
         }).join('') +
       '</div>' +
-      '<div class="cfgb-dock__title" role="status" aria-live="polite">' +
-        '<span class="cfgb-dock__titletext"><span class="cfgb-dock__n" id="setStepN"></span>' +
-        '<span class="cfgb-dock__name"><span id="setStepName"></span></span></span>' +
+      '<div class="cfgb-dock__title setwizhd" role="status" aria-live="polite">' +
+        '<img class="setwizhd__img" id="setHdImg" alt="" hidden>' +
+        '<span class="setwizhd__id"><span class="setwizhd__cap" id="setHdCap"></span>' +
+        '<span class="cfgb-dock__name setwizhd__name"><span id="setStepName"></span></span>' +
+        '<span class="setwizhd__sub" id="setHdSub"></span></span>' +
+        '<span class="setwizhd__price" id="setHdPrice"><span class="setwizhd__pricecap">Konfiguriert</span><b id="setHdAmount"></b></span>' +
       '</div>';
   }
   function refreshWizTotals() {
@@ -591,15 +608,17 @@
   }
   /* CTA: always live, validate on click (single-product PDP logic) – missing colour
      surfaces at the swatches; otherwise the set is added to the cart. */
+  /* nudge the user to the colour rail: flash the swatches + scroll/pulse #setfin.
+     Shared by the missing-colour CTA validation and the gate CTA. */
+  function promptColor() {
+    var sw = document.getElementById('setfinSwatches');
+    if (sw) { sw.classList.remove('is-invalid'); void sw.offsetWidth; sw.classList.add('is-invalid'); }
+    var s = document.getElementById('setfin');
+    if (s) { s.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+      s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); }
+  }
   function addSetToCart() {
-    if (!bothChosen()) {
-      var sw = document.getElementById('setfinSwatches');
-      if (sw) { sw.classList.remove('is-invalid'); void sw.offsetWidth; sw.classList.add('is-invalid'); }
-      var s = document.getElementById('setfin');
-      if (s) { s.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
-        s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); }
-      return;
-    }
+    if (!bothChosen()) { promptColor(); return; }
     var badge = document.querySelector('.header .icon-btn[aria-label="Warenkorb"] .badge') || document.querySelector('.header .badge');
     if (badge) badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
   }
@@ -635,7 +654,31 @@
     update();
   }
 
+  /* smoothly animate the configurator open when it unlocks (height 0 → content,
+     then released to auto so the sticky dock keeps working). */
+  var wizWasLocked = true;
+  function revealConfig() {
+    var r = document.getElementById('setwizReveal'); if (!r) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var target = r.scrollHeight;
+    r.classList.add('is-animating');
+    r.style.height = '0px';
+    void r.offsetHeight;                 /* commit the 0 height before animating */
+    r.style.height = target + 'px';
+    var done = function (e) {
+      if (e && e.propertyName && e.propertyName !== 'height') return;
+      r.style.height = ''; r.classList.remove('is-animating');
+      r.removeEventListener('transitionend', done);
+    };
+    r.addEventListener('transitionend', done);
+    setTimeout(done, 520);               /* fallback if transitionend doesn't fire */
+  }
   function refresh() { refreshLead(); refreshRail(); refreshPanel('a'); refreshPanel('b'); refreshSummary(); refreshSteps(); syncSticky();
-    paintStepStatus(document.getElementById('prodA')); paintStepStatus(document.getElementById('prodB')); }
+    paintStepStatus(document.getElementById('prodA')); paintStepStatus(document.getElementById('prodB'));
+    /* gate: the configurator stays collapsed until a set colour is chosen */
+    var wiz = document.querySelector('.setwiz');
+    if (wiz) { var lockNow = !bothChosen(); wiz.classList.toggle('is-locked', lockNow);
+      if (wizWasLocked && !lockNow) revealConfig(); wizWasLocked = lockNow; } }
   renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky(); setupStickyDock();
+  var lockCta = document.getElementById('setwizLockCta'); if (lockCta) lockCta.addEventListener('click', promptColor);
 })();

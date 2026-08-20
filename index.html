@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="pdp.css?v=35" />
 <!-- Version B – inline build panel -->
 <link rel="stylesheet" href="pdp-b.css?v=637" />
-<link rel="stylesheet" href="set.css?v=55" />
+<link rel="stylesheet" href="set.css?v=76" />
 <!-- Prototype variant switch – append ?flow=b (v2) or ?flow=c (v3) to load an alternative
      color-selection flow. Default (no param) renders v1 exactly as-is. Runs in <head> so the
      class is set before paint. v2 = "Alle Farben" text link → side window; v3 = a selected-
@@ -369,21 +369,24 @@
       <div class="pdp-media">
         <div class="pdp-media__stage">
           <img class="pdp-media__img" id="pdpMainImg"
-               src="Bundled Product/Image/einfamilien-briefkasten-main.webp"
+               src="Product%20Image/set-hero-stella-siebert.png"
                alt="Set aus Metzler Türklingel „Stella" und Briefkasten „Siebert" im abgestimmten Anthrazit-Farbton" />
         </div>
 
         <ul class="pdp-thumbs" id="pdpThumbs" aria-label="Weitere Ansichten">
-          <li><button type="button" aria-current="true"><img src="Bundled Product/Image/einfamilien-briefkasten-main.webp" alt="Set – Türklingel „Stella" und Briefkasten „Siebert""></button></li>
+          <li><button type="button" aria-current="true"><img src="Product%20Image/set-hero-stella-siebert.png" alt="Set aus Metzler Türklingel „Stella" und Briefkasten „Siebert""></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/einfamilien-briefkasten-main.webp" alt="Set – Türklingel „Stella" und Briefkasten „Siebert""></button></li>
           <li><button type="button" aria-current="false"><img src="Bundled Product/Image/metzler-set-stella-siebert-main.webp" alt="Set – Türklingel „Stella" und Briefkasten „Siebert" (abgestimmter Anthrazit-Farbton)"></button></li>
           <li><button type="button" aria-current="false"><img src="Bundled Product/Image/BundleImage.png" alt="Set – Türklingel „Stella" und Briefkasten „Siebert" (Produktfotomontage)"></button></li>
           <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Türklingeln/metzler-tuerklingel-mit-gravur-led-taster-optional-stella.webp" alt="Türklingel „Stella" mit Gravur und LED-Taster"></button></li>
-          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert.webp" alt="Briefkasten „Siebert" aus hochwertigem Stahl"></button></li>
           <li><button type="button" aria-current="false"><img src="Bundled Product/Image/Breifkasten/metzler-briefkasten-aus-hochwertigem-stahl-siebert~4.webp" alt="Briefkasten „Siebert" – Detailansicht"></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/metzler-tuerklingel-mit-gravur-led-taster-optional-stella~2.webp" alt="Türklingel „Stella" an der Hauswand montiert"></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/metzler-briefkasten-anthrazit-ral-7016-hochwertiger-stahl-siebert~6.webp" alt="Briefkasten „Siebert" am Hauseingang mit Bepflanzung"></button></li>
+          <li><button type="button" aria-current="false"><img src="Bundled Product/Image/metzler-briefkasten-anthrazit-ral-7016-hochwertiger-stahl-siebert~23.webp" alt="Briefkasten „Siebert" mit Ablagefach am Eingang"></button></li>
         </ul>
         <button type="button" class="pdp-thumbs__all" id="pdpThumbsAll" aria-haspopup="dialog" aria-controls="pdpLightbox">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          <span>Alle <span id="pdpThumbsCount">6</span> Bilder ansehen</span>
+          <span>Alle <span id="pdpThumbsCount">9</span> Bilder ansehen</span>
         </button>
       </div>
 
@@ -405,11 +408,21 @@
           <!-- One cohesive configurator card: the .cfgb-dock progress bar + step title
                are its header band; the active step is its body (no nested cards). -->
           <div class="setwiz">
-            <nav id="setSteps" aria-label="Konfiguration – Schritte"></nav>
-            <div class="setwiz__stage">
-              <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
-              <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
-              <aside class="setsum" id="setsum" aria-label="Set-Zusammenfassung"></aside>
+            <!-- Gate CTA: the configurator stays collapsed until a set colour is
+                 chosen (set.js toggles .setwiz.is-locked); this CTA nudges the
+                 user up to the colour rail. -->
+            <div class="setwiz__lock" id="setwizLock">
+              <button type="button" class="setwiz__lockcta" id="setwizLockCta">Bitte Farbe wählen</button>
+            </div>
+            <!-- reveal wrapper: collapsed while locked; set.js smoothly animates its
+                 height open when a colour is chosen, then releases to auto. -->
+            <div class="setwiz__reveal" id="setwizReveal">
+              <nav id="setSteps" aria-label="Konfiguration – Schritte"></nav>
+              <div class="setwiz__stage">
+                <section class="setprod" id="prodA" aria-label="Türklingel Stella konfigurieren"></section>
+                <section class="setprod" id="prodB" aria-label="Briefkasten Siebert konfigurieren"></section>
+                <aside class="setsum" id="setsum" aria-label="Set-Zusammenfassung"></aside>
+              </div>
             </div>
           </div>
         </div>
@@ -1574,7 +1587,7 @@
 <!-- pdp-b.js (single-product engine) is intentionally omitted on the set page;
      the set configuration flow is driven by set.js. Non-config PDP sections
      (gallery, tech accordions) render statically in this prototype. -->
-<script src="set.js?v=46"></script>
+<script src="set.js?v=52"></script>
 <script src="gallery.js?v=1"></script>
 <script src="reviews.js?v=1"></script>
 </body>
