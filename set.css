@@ -2,9 +2,9 @@
    Metzler SET configuration flow – set-specific components, embedded in the
    duplicated PDP's buy box. Uses the shared design tokens from pdp.css.
    ============================================================ */
-/* WCAG AA: the brand green (#1E874B ≈ 3.7:1 on white) fails 4.5:1 for the small
-   "inklusive"/availability text — darken it within the configurator to ≥4.5:1. */
-.setcfg, #pdpStickyBar { --color-green: #1A7A43; }
+/* success / availability green follows the design system (--color-green #009951)
+   from pdp.css — no set-specific override, so "inklusive", the Set-Rabatt and
+   "Sofort verfügbar" all read in the canonical brand green. */
 .setp-hero__eyebrow { color: var(--color-teal); }
 /* Set title: a clean, confident lockup of the two products – the premium-shop way
    to title a bundle. Brand + "Set" live in the eyebrow; each product's full name
@@ -244,11 +244,16 @@
 .setdt__price b { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: var(--color-digital-black); font-variant-numeric: tabular-nums; line-height: 1.1; }
 .setdt__was { font-size: 0.95rem; color: var(--color-graphite-500); text-decoration: line-through; font-variant-numeric: tabular-nums; }
 .setdt__mult { font-size: 0.8125rem; font-weight: 700; color: var(--color-graphite-500); }
-.setdt__save { margin: 0.25rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
+/* savings = a green pill (value/money-saved) — the deal reads as a distinct,
+   scannable beat rather than a plain line */
+.setdt__save { display: inline-flex; align-items: baseline; gap: 0.3rem; margin: 0.5rem 0 0; padding: 0.22rem 0.6rem;
+  font-size: 0.8125rem; font-weight: 700; color: var(--color-green); background: var(--color-green-50); border-radius: var(--radius-pill); }
 .setdt__save b { color: var(--color-green); }
-.setdt__meta { margin: 0.35rem 0 0; font-size: 0.75rem; color: var(--color-graphite-600); }
+.setdt__meta { margin: 0.45rem 0 0; font-size: 0.75rem; color: var(--color-graphite-600); }
 .setdt__meta a { color: var(--color-teal); text-underline-offset: 0.12rem; }
-.setdt__avail { margin: 0.2rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
+/* availability = green status dot + text (calm in-stock reassurance) */
+.setdt__avail { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.5rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
+.setdt__avail::before { content: ""; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-green); }
 .setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-graphite-700);
   background: none; border: 0; padding: 0.55rem 0.2rem; cursor: pointer; transition: color .16s; }
 .setwiz__back svg { width: 1.05rem; height: 1.05rem; }
@@ -319,9 +324,12 @@
    on the whole card (never behind the image → never a white box).
    ============================================================ */
 .cfg-tstr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; }
+/* borderless tiles: no hard resting border (was 1.5px graphite) — a soft
+   drop-shadow floats each tile so the grid reads clean, not boxed-in. The teal
+   border only appears on selection. */
 .cfg-tstr { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem;
-  padding: 0.55rem 0.55rem 0.7rem; background: var(--color-white); border: 1.5px solid var(--color-graphite-200);
-  border-radius: var(--radius-lg); cursor: pointer; text-align: left; box-shadow: 0 1px 2px rgba(10,20,20,0.05);
+  padding: 0.55rem 0.55rem 0.7rem; background: var(--color-white); border: 1.5px solid transparent;
+  border-radius: var(--radius-lg); cursor: pointer; text-align: left; box-shadow: 0 1px 3px rgba(16,24,32,0.08), 0 1px 2px rgba(16,24,32,0.04);
   transition: border-color .18s ease, box-shadow .22s ease, transform .18s ease; -webkit-tap-highlight-color: transparent; }
 .cfg-tstr:hover { transform: translateY(-2px);
   box-shadow: 0 0.7rem 1.4rem -0.75rem rgba(10,20,20,0.32), 0 0 1rem -0.15rem color-mix(in srgb, var(--tstr-glow, transparent) 30%, transparent); }
