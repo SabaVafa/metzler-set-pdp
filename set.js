@@ -400,11 +400,11 @@
      Lists each product's base price and every surcharge option that was added
      (radio deltas > 0) plus any inklusive personalisation, then the set discount
      and quantity-aware total. Shared by both product-step "Preisdetails" panels. */
-  function priceBreakdown() {
-    var q = state.qty, ready = bothChosen();
-    var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
-    /* configured-items card — product line + its chosen options (single-product live layout) */
-    var items = ['a', 'b'].map(function (k) {
+  /* per-product configured items: product line + each chosen option with its price
+     or "inklusive" (single-product live layout). Reused by the step price-details
+     and by the collapsible "Ausstattung im Detail" disclosure in the summary. */
+  function configuredItemsHtml() {
+    return ['a', 'b'].map(function (k) {
       var p = PRODUCTS[k];
       var opts = p.options.map(function (o) {
         if (o.type === 'radio') {
@@ -418,6 +418,12 @@
       return '<div class="setdt__item"><span class="setdt__iname">' + esc(p.name) + '</span>' +
         '<span class="setdt__iprice">' + eur(productTotal(k)) + '</span></div>' + opts;
     }).join('');
+  }
+  function priceBreakdown() {
+    var q = state.qty, ready = bothChosen();
+    var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
+    /* configured-items card — product line + its chosen options (single-product live layout) */
+    var items = configuredItemsHtml();
     /* price summary — mirrors the live "Preis wie konfiguriert" block */
     return '<div class="setdt">' +
       '<div class="setdt__items">' + items + '</div>' +
@@ -433,23 +439,38 @@
   }
 
   /* ---- combined summary ---- */
+  /* the chosen options of ONE product, as .setdt__opt rows (value + price/inklusive) */
+  function productOptRows(k) {
+    return PRODUCTS[k].options.map(function (o) {
+      if (o.type === 'radio') {
+        var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0]; if (!c) return '';
+        var val = c.d > 0 ? '<span class="setdt__oval">+ ' + eur(c.d) + '</span>' : '<span class="setdt__oval is-incl">inklusive</span>';
+        return '<div class="setdt__opt"><span class="setdt__oname">' + esc(o.label) + ' · ' + esc(c.label) + '</span>' + val + '</div>';
+      }
+      var t = (state[k][o.id] || '').trim(); if (!t) return '';
+      return '<div class="setdt__opt"><span class="setdt__oname">' + esc(o.label) + ' · „' + esc(t) + '"</span><span class="setdt__oval is-incl">inklusive</span></div>';
+    }).join('');
+  }
   function lineItems() {
     return ['a', 'b'].map(function (k) {
       var p = PRODUCTS[k], f = finishFor(k);
-      var opts = p.options.filter(function (o) { return o.type === 'radio' && optDelta(k, o) > 0; }).map(function (o) {
-        var c = o.choices.filter(function (x) { return x.v === state[k][o.id]; })[0];
-        return '<span class="setsum__iopt">' + esc(o.label) + ': ' + esc(c.label) + ' <em>+' + eur(optDelta(k, o)) + '</em></span>';
-      }).join('');
-      var meta = f
-        ? '<span class="setsum__imeta">' + esc(f.name) + (f.code ? ' · ' + f.code : '') + '</span>'
-        : '';
-      return '<div class="setsum__item">' +
-        '<span class="setsum__ithumb"><img src="' + p.img + '" alt="" loading="lazy"></span>' +
-        '<div class="setsum__imain"><span class="setsum__iname">' + esc(p.name) + '</span>' +
-          meta +
-          (opts ? '<span class="setsum__iopts">' + opts + '</span>' : '') +
-        '</div>' +
-        '<span class="setsum__iprice">' + (state.qty > 1 ? '<span class="setsum__iqty">' + state.qty + '×&nbsp;</span>' : '') + eur(productTotal(k) * state.qty) + '</span></div>';
+      var meta = f ? '<span class="setsum__imeta">' + esc(f.name) + (f.code ? ' · ' + f.code : '') + '</span>' : '';
+      /* per-product "Ausstattung im Detail" = a minimal bordered bar that expands
+         to share its frame with the option/price breakdown (one accordion unit) */
+      var optRows = productOptRows(k), hasOpts = !!optRows, open = sumDetailsOpen[k];
+      var acc = hasOpts ? '<div class="setsum__acc' + (open ? ' is-open' : '') + '">' +
+          '<button type="button" class="setsum__acctoggle" data-prod="' + k + '" aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="setsumDet-' + k + '">' +
+            '<span>Ausstattung im Detail</span>' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>' +
+          '<div class="setsum__accbody" id="setsumDet-' + k + '"><div class="setdt__items">' + optRows + '</div></div>' +
+        '</div>' : '';
+      return '<div class="setsum__prod">' +
+        '<div class="setsum__item">' +
+          '<span class="setsum__ithumb"><img src="' + p.img + '" alt="" loading="lazy"></span>' +
+          '<div class="setsum__imain"><span class="setsum__iname">' + esc(p.name) + '</span>' + meta + '</div>' +
+          '<span class="setsum__iprice">' + (state.qty > 1 ? '<span class="setsum__iqty">' + state.qty + '×&nbsp;</span>' : '') + eur(productTotal(k) * state.qty) + '</span>' +
+        '</div>' + acc +
+      '</div>';
     }).join('');
   }
   /* lead price panel at the top of the buy column (single-product PDP position) */
@@ -468,6 +489,7 @@
       '<div class="pdp-avail"><span class="pdp-avail__status">Sofort verfügbar</span></div>' +
     '</div>';
   }
+  var sumDetailsOpen = { a: false, b: false };   /* per-product "Ausstattung im Detail" disclosure state (persists across re-renders) */
   function refreshSummary() {
     var el = document.getElementById('setsum');
     var q = state.qty, ready = bothChosen();
@@ -617,8 +639,37 @@
     if (s) { s.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
       s.classList.remove('setfin--hl'); void s.offsetWidth; s.classList.add('setfin--hl'); setTimeout(function () { s.classList.remove('setfin--hl'); }, 1600); }
   }
+  /* first required option (across both products) still unanswered, or null */
+  function firstMissingRequired() {
+    var ks = ['a', 'b'];
+    for (var i = 0; i < ks.length; i++) { var k = ks[i], opts = PRODUCTS[k].options;
+      for (var j = 0; j < opts.length; j++) { var o = opts[j]; if (o.required && !hasStepValue(k, o)) return { k: k, o: o }; } }
+    return null;
+  }
+  /* surface a missing requirement the single-product PDP way: jump to its step,
+     open it, scroll it below the sticky header, and flash the step. */
+  function flagMissingRequired(miss) {
+    var stepId = miss.k === 'a' ? 'prodA' : 'prodB', switching = currentStepId !== stepId;
+    if (switching) showStep(stepId, false);
+    var el = document.getElementById('prod' + miss.k.toUpperCase());
+    var item = el.querySelector('.stepr__item[data-optstep="' + miss.o.id + '"]'); if (!item) return;
+    collapseSteps(el); openStep(item); paintStepStatus(el);
+    var run = function () {
+      item.classList.remove('is-flash'); void item.offsetWidth; item.classList.add('is-flash');
+      setTimeout(function () { item.classList.remove('is-flash'); }, 700);
+      var head = item.querySelector('.stepr__head') || item;
+      var header = document.querySelector('.header'), dock = document.getElementById('setSteps');
+      var off = (header ? header.getBoundingClientRect().height : 0) + (dock ? dock.getBoundingClientRect().height : 0) + 14;
+      window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: scrollBehavior() });
+    };
+    setTimeout(run, switching ? 80 : 0);
+  }
   function addSetToCart() {
+    /* validation order mirrors the single-product PDP: colour first, then the
+       first unanswered required option; only then does the set enter the cart. */
     if (!bothChosen()) { promptColor(); return; }
+    var miss = firstMissingRequired();
+    if (miss) { flagMissingRequired(miss); return; }
     var badge = document.querySelector('.header .icon-btn[aria-label="Warenkorb"] .badge') || document.querySelector('.header .badge');
     if (badge) badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
   }
@@ -681,4 +732,14 @@
       if (wizWasLocked && !lockNow) revealConfig(); wizWasLocked = lockNow; } }
   renderRail(); renderPanel('a'); renderPanel('b'); renderSteps(); refresh(); showStep('prodA', false); setupSticky(); setupStickyDock();
   var lockCta = document.getElementById('setwizLockCta'); if (lockCta) lockCta.addEventListener('click', promptColor);
+  /* "Ausstattung im Detail" disclosure in the summary (delegated: #setsum persists
+     across re-renders, only its innerHTML changes). */
+  var setsumEl = document.getElementById('setsum');
+  if (setsumEl) setsumEl.addEventListener('click', function (e) {
+    var t = e.target.closest('.setsum__acctoggle'); if (!t) return;
+    var k = t.getAttribute('data-prod'); if (!k) return;
+    sumDetailsOpen[k] = !sumDetailsOpen[k];
+    t.setAttribute('aria-expanded', sumDetailsOpen[k] ? 'true' : 'false');
+    var acc = t.closest('.setsum__acc'); if (acc) acc.classList.toggle('is-open', sumDetailsOpen[k]);
+  });
 })();

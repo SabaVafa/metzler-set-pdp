@@ -2,9 +2,11 @@
    Metzler SET configuration flow – set-specific components, embedded in the
    duplicated PDP's buy box. Uses the shared design tokens from pdp.css.
    ============================================================ */
-/* success / availability green follows the design system (--color-green #009951)
-   from pdp.css — no set-specific override, so "inklusive", the Set-Rabatt and
-   "Sofort verfügbar" all read in the canonical brand green. */
+/* Success/availability green: the DS base green (#009951) is only ~3.3–3.7:1 on
+   white/green-50 — fails AA for the small "inklusive" / Set-Rabatt / "Sofort
+   verfügbar" text. Map the configurator's green to the DS's darker shade
+   green-600 (#007A40 ≈ 4.9–5.4:1), so it stays a design-system green AND passes AA. */
+.setcfg, #pdpStickyBar { --color-green: var(--color-green-600); }
 .setp-hero__eyebrow { color: var(--color-teal); }
 /* Set title: a clean, confident lockup of the two products – the premium-shop way
    to title a bundle. Brand + "Set" live in the eyebrow; each product's full name
@@ -40,7 +42,8 @@
   background: var(--color-paper); border: 1px solid var(--color-graphite-200); padding: 0.25rem; box-sizing: border-box; }
 .setwizhd__img[hidden] { display: none; }
 .setwizhd__id { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
-.setwizhd__cap { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-teal); }
+/* "PRODUKT N" caption in graphite-600, consistent with the "KONFIGURIERT" label */
+.setwizhd__cap { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-graphite-600); }
 .setwizhd__cap[hidden] { display: none; }
 .setwiz .setwizhd__name { display: block; margin: 0.1rem 0; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-digital-black); line-height: 1.2; }
 .setwizhd__sub { font-size: 0.8125rem; font-weight: 500; line-height: 1.45; color: var(--color-graphite-700); }
@@ -228,21 +231,23 @@
 .setdt { margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem;
   padding: 0.7rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); }
 .setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); padding: 1rem 1.1rem; }
-/* configured items */
-.setdt__item { display: flex; justify-content: space-between; align-items: baseline; gap: 0.9rem; }
-.setdt__item ~ .setdt__item { margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
-.setdt__iname { font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); line-height: 1.35; }
-.setdt__iprice { font-size: 0.875rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.setdt__opt { display: flex; justify-content: space-between; gap: 0.9rem; margin-top: 0.5rem; }
-.setdt__oname { font-size: 0.8125rem; color: var(--color-graphite-600); }
+/* configured items — mirrors the single-product PDP's .sum-row list: one flat
+   itemised list, uniform 0.8125rem, a hairline (graphite-100) between EVERY row,
+   names in digital-black (bold for the product), prices bold + green "inklusive" */
+.setdt__item, .setdt__opt { display: flex; justify-content: space-between; align-items: center; gap: 0.9rem; margin: 0; padding: 0.55rem 0; }
+.setdt__items > * + * { border-top: 1px solid var(--color-graphite-100); }
+.setdt__iname { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); line-height: 1.3; }
+.setdt__iprice { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.setdt__oname { font-size: 0.8125rem; color: var(--color-digital-black); }
 .setdt__oval { font-size: 0.8125rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .setdt__oval.is-incl { color: var(--color-green); font-weight: 600; }
 /* price summary block (right-aligned, like the live "Preis wie konfiguriert") */
 .setdt__sum { text-align: right; }
-.setdt__eyebrow { font-size: 0.8125rem; color: var(--color-graphite-500); }
+/* AA contrast: graphite-600 (~5.4:1), not graphite-500 (~2.5:1, fails) */
+.setdt__eyebrow { font-size: 0.8125rem; color: var(--color-graphite-600); }
 .setdt__price { display: flex; align-items: baseline; justify-content: flex-end; gap: 0.5rem; margin-top: 0.1rem; }
 .setdt__price b { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: var(--color-digital-black); font-variant-numeric: tabular-nums; line-height: 1.1; }
-.setdt__was { font-size: 0.95rem; color: var(--color-graphite-500); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+.setdt__was { font-size: 0.95rem; color: var(--color-graphite-600); text-decoration: line-through; font-variant-numeric: tabular-nums; }
 .setdt__mult { font-size: 0.8125rem; font-weight: 700; color: var(--color-graphite-500); }
 /* savings = a green pill (value/money-saved) — the deal reads as a distinct,
    scannable beat rather than a plain line */
@@ -254,10 +259,11 @@
 /* availability = green status dot + text (calm in-stock reassurance) */
 .setdt__avail { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.5rem 0 0; font-size: 0.8125rem; font-weight: 700; color: var(--color-green); }
 .setdt__avail::before { content: ""; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-green); }
-.setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-graphite-700);
+/* back links read in the primary brand colour (teal #015253), like all links */
+.setwiz__back { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; font-size: 0.875rem; font-weight: 700; color: var(--color-teal);
   background: none; border: 0; padding: 0.55rem 0.2rem; cursor: pointer; transition: color .16s; }
 .setwiz__back svg { width: 1.05rem; height: 1.05rem; }
-.setwiz__back:hover { color: var(--color-teal); }
+.setwiz__back:hover { color: var(--color-teal-600); }
 /* configuration nav = SECONDARY action (black), mirroring the single PDP .cfgb-nav__fwd */
 .setwiz__next { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-size: 0.9375rem; font-weight: 700; color: #fff;
   background: var(--color-digital-black); border: 0; border-radius: var(--radius); padding: 0.7rem 1.25rem; cursor: pointer;
@@ -273,7 +279,9 @@
 .setbuy__row.is-precolor .cfgb-buyrow__qty { display: none; }        /* no colour yet → CTA spans full width */
 .cfgb-buyrow .setsum__cta { flex: 1 1 auto; width: auto; height: 3.25rem; padding-top: 0; padding-bottom: 0; margin-top: 0; }
 /* back link above the Übersicht summary */
-.setsum__back { margin-bottom: 0.85rem; }
+/* the summary back link reads in the primary brand colour (teal #015253) */
+.setsum__back { margin-bottom: 0.85rem; color: var(--color-teal); }
+.setsum__back:hover { color: var(--color-teal-600); }
 /* single-product price panel inside the set summary */
 .setsum .pdp-price--lead { margin-top: 1.15rem; }
 .setsum .setbuy__row { margin-top: 1.1rem; }
@@ -521,7 +529,10 @@
 .setsum__badge { flex: none; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.02em; color: var(--color-green); background: var(--color-green-50, #eaf6ee);
   border: 1px solid var(--color-green-200, #bfe3cb); border-radius: var(--radius-pill); padding: 0.22rem 0.6rem; }
 
-.setsum__items { display: flex; flex-direction: column; gap: 0.9rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+/* block (not flex) so each product's details grid-rows reveal can resolve its
+   height; products are spaced with margins instead of flex gap */
+.setsum__items { display: block; padding-bottom: 1rem; border-bottom: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setsum__prod + .setsum__prod { margin-top: 0.9rem; }
 .setsum__item { display: flex; align-items: center; gap: 0.8rem; }
 .setsum__ithumb { flex: none; width: 2.9rem; height: 2.9rem; border-radius: var(--radius); overflow: hidden;
   background: var(--color-paper); border: 1px solid var(--color-graphite-200); display: grid; place-items: center; }
@@ -538,6 +549,21 @@
 .setsum__iopt em { font-style: normal; font-weight: 600; color: var(--color-graphite-600); }
 .setsum__iprice { grid-row: 1 / span 2; align-self: center; font-size: 0.9375rem; font-weight: 700; color: var(--color-digital-black); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .setsum__iqty { font-weight: 700; color: var(--color-graphite-500); }
+
+.setsum__prod { display: block; }
+/* per-product "Ausstattung im Detail" = a minimal bordered BAR that, when open,
+   shares one frame with its content (a self-contained accordion unit) */
+.setsum__acc { margin-top: 0.55rem; border: 1px solid var(--color-graphite-200); border-radius: var(--radius); overflow: hidden; }
+.setsum__acctoggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  padding: 0.6rem 0.85rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
+.setsum__acctoggle:hover { background: var(--color-graphite-100); }
+.setsum__acctoggle:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
+.setsum__acctoggle svg { flex: none; width: 1rem; height: 1rem; transition: transform .2s ease; }
+.setsum__acctoggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+/* body shares the frame; a hairline separates it from the bar when open */
+.setsum__accbody { display: none; padding: 0.5rem 0.85rem 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+.setsum__acc.is-open .setsum__accbody { display: block; }
+.setsum__accbody .setdt__items { border: 0; background: none; padding: 0; }
 
 .setsum__rows { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 0; }
 .setsum__row { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.875rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
