@@ -230,10 +230,12 @@
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
 /* price detail — matches the live product buy box: a configured-items card + a
    "Preis wie konfiguriert" summary + PayPal note, on a soft paper field. */
-.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0;
-  padding: 0; background: none; border: 0; border-top: 1px solid var(--color-graphite-200); }
-.setdt__items, .setdt__sum { background: none; border: 0; border-radius: 0; padding: 1rem 1.45rem; }
-.setdt__items + .setdt__sum { border-top: 1px solid var(--color-graphite-200); }
+/* original two-box layout (line-items card + summary card), now full-width and
+   squared. The wrapper is transparent (no paper field) so the gap between the two
+   cards shows the white card background — not the grey strips it produced before. */
+.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0.7rem;
+  padding: 0; background: none; border: 0; border-radius: 0; }
+.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: 0; padding: 1rem 1.45rem; }
 /* configured items — mirrors the single-product PDP's .sum-row list: one flat
    itemised list, uniform 0.8125rem, a hairline (graphite-100) between EVERY row,
    names in digital-black (bold for the product), prices bold + green "inklusive" */
@@ -560,9 +562,9 @@
 .setsum__prod { display: block; }
 /* per-product "Ausstattung im Detail" = a minimal bordered BAR that, when open,
    shares one frame with its content (a self-contained accordion unit) */
-.setsum__acc { margin-top: 0.55rem; border: 1px solid var(--color-graphite-200); border-radius: 0; overflow: hidden; }
+.setsum__acc { margin: 0.55rem -1.45rem 0; border: 1px solid var(--color-graphite-200); border-left: 0; border-right: 0; border-radius: 0; overflow: hidden; }
 .setsum__acctoggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
-  padding: 0.6rem 0.85rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
+  padding: 0.6rem 1.45rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
 .setsum__acctoggle:hover { background: var(--color-graphite-100); }
 .setsum__acctoggle:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
 .setsum__acctoggle svg { flex: none; width: 1rem; height: 1rem; transition: transform .2s ease; }
@@ -576,7 +578,7 @@
 .setsum__accbody { overflow: hidden; height: 0; transition: height .28s ease; }
 .setsum__acc.is-open .setsum__accbody { height: auto; }
 .setsum__accbody .setdt__items { border: 0; background: none;
-  padding: 0.5rem 0.85rem 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+  padding: 0.5rem 1.45rem 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
 
 .setsum__rows { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 0; }
 .setsum__row { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.875rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
