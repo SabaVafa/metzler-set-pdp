@@ -228,14 +228,12 @@
 /* price-details breakdown — always shown below the step nav */
 .setwiz__details { display: grid; grid-template-rows: 1fr; }
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
-/* price detail: a full-width bordered frame (aligned to the config bars) holding two
-   white sections — the configured-items list and the "Preis wie konfiguriert" price
-   card (which also holds the qty stepper + CTA). The white sections fill the frame
-   edge-to-edge and butt together with a single hairline — no grey gutters/strips. */
-.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0;
-  padding: 0; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: 0; }
-.setdt__items, .setdt__sum { background: var(--color-white); border: 0; border-radius: 0; padding: 1.1rem 1.2rem; }
-.setdt__items + .setdt__sum { border-top: 1px solid var(--color-graphite-200); }
+/* price detail (reference model): one paper (grey) panel holding TWO white cards —
+   the configured-items list and the "Preis wie konfiguriert" price card, the latter
+   also containing the qty stepper + CTA. */
+.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0.9rem;
+  padding: 0.9rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); }
+.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); padding: 1.1rem 1.2rem; }
 /* qty stepper + CTA live inside the price card, below the availability line
    (stepper hide-when-precolor + CTA flex sizing come from the shared .setbuy__row
    / .cfgb-buyrow rules) */
