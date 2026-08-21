@@ -361,8 +361,7 @@
         : '<span class="setwiz__spacer"></span>') +
       '<button type="button" class="setwiz__next" data-wiznext>' + (k === 'a' ? 'Weiter zum Briefkasten' : 'Weiter zur Übersicht') + '</button>' +
       '</div>' +
-      '<div class="setwiz__details is-open" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>' +
-      '<div class="setwiz__buy">' + buyRow('stepcta-' + k, '') + '</div>';
+      '<div class="setwiz__details is-open" id="setdt-' + k + '"><div class="setwiz__detailsinner" id="setdtbody-' + k + '"></div></div>';
     /* product identity now lives in the dock heading band (paintDockHeader) —
        the step body starts straight at the options, no duplicate header row. */
     el.innerHTML =
@@ -429,12 +428,13 @@
         '<span class="setdt__iprice">' + eur(productTotal(k)) + '</span></div>' + opts;
     }).join('');
   }
-  function priceBreakdown() {
+  function priceBreakdown(k) {
     var q = state.qty, ready = bothChosen();
     var sub = (productTotal('a') + productTotal('b')) * q, disc = ready ? sub * SET_DISCOUNT : 0, total = sub - disc;
     /* configured-items card — product line + its chosen options (single-product live layout) */
     var items = configuredItemsHtml();
-    /* price summary — mirrors the live "Preis wie konfiguriert" block */
+    /* two white cards on a paper panel (reference model): line-items card + a price
+       card that also holds the qty stepper + CTA (buyRow lives INSIDE .setdt__sum). */
     return '<div class="setdt">' +
       '<div class="setdt__items">' + items + '</div>' +
       '<div class="setdt__sum">' +
@@ -442,8 +442,9 @@
         '<div class="setdt__price">' + (ready ? '<s class="setdt__was">' + eur(sub) + '</s>' : '') +
           '<b>' + eur(total) + '</b>' + (q > 1 ? '<span class="setdt__mult">' + q + '&nbsp;×</span>' : '') + '</div>' +
         (ready ? '<p class="setdt__save">Set-Rabatt −10&nbsp;% · <b>−' + eur(disc) + '</b></p>' : '') +
-        '<p class="setdt__meta">inkl. 19% USt. · <a href="#">zzgl. Versand</a></p>' +
+        '<p class="setdt__meta">inkl. 19% USt. · <a href="#">Versandkostenfreie Lieferung</a></p>' +
         '<p class="setdt__avail">Sofort verfügbar</p>' +
+        buyRow('stepcta-' + k, ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen') +
       '</div>' +
     '</div>';
   }
@@ -603,17 +604,10 @@
       '</div>';
   }
   function refreshWizTotals() {
-    var ready = bothChosen();
-    var breakdown = priceBreakdown();
+    /* re-render each step's price detail; buyRow (now inside .setdt__sum) carries the
+       live qty / label / is-precolor / disabled state, so no separate patching. */
     ['a', 'b'].forEach(function (k) {
-      var dt = document.getElementById('setdtbody-' + k); if (dt) dt.innerHTML = breakdown;
-      var cta = document.getElementById('stepcta-' + k); if (cta) cta.textContent = ready ? 'Set in den Warenkorb' : 'Bitte Set-Farbe wählen';
-      var row = document.querySelector('#prod' + k.toUpperCase() + ' .setbuy__row');
-      if (row) {
-        row.classList.toggle('is-precolor', !ready);
-        var val = row.querySelector('.setbuy__qtyval'); if (val) val.textContent = state.qty;
-        var minus = row.querySelector('button[data-qd="-1"]'); if (minus) minus.disabled = state.qty <= 1;
-      }
+      var dt = document.getElementById('setdtbody-' + k); if (dt) dt.innerHTML = priceBreakdown(k);
     });
   }
   function refreshSteps() { paintSteps(); refreshWizTotals(); }

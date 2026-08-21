@@ -228,14 +228,16 @@
 /* price-details breakdown — always shown below the step nav */
 .setwiz__details { display: grid; grid-template-rows: 1fr; }
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
-/* price detail — one surface, no nesting (Codex proposal). The configured-items
-   list and the "Preis wie konfiguriert" summary read as one flat ledger inside the
-   configurator card, separated only by hairlines — no grey panel, no nested cards,
-   no full-bleed breakout. */
-.setdt { margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0;
-  padding: 0; background: none; border: 0; border-top: 1px solid var(--color-graphite-200); border-radius: 0; }
-.setdt__items, .setdt__sum { background: none; border: 0; border-radius: 0; padding: 0.9rem 0; }
-.setdt__items + .setdt__sum { border-top: 1px solid var(--color-graphite-200); }
+/* price detail (reference model): one paper (grey) panel holding TWO white cards —
+   the configured-items list and the "Preis wie konfiguriert" price card, the latter
+   also containing the qty stepper + CTA. */
+.setdt { margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.9rem;
+  padding: 0.9rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: var(--radius-lg); }
+.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: var(--radius); padding: 1.1rem 1.2rem; }
+/* qty stepper + CTA live inside the price card, below the availability line
+   (stepper hide-when-precolor + CTA flex sizing come from the shared .setbuy__row
+   / .cfgb-buyrow rules) */
+.setdt__sum .setbuy__row { margin-top: 1.1rem; }
 /* configured items — mirrors the single-product PDP's .sum-row list: one flat
    itemised list, uniform 0.8125rem, a hairline (graphite-100) between EVERY row,
    names in digital-black (bold for the product), prices bold + green "inklusive" */
@@ -277,9 +279,9 @@
 .setwiz__next:hover { background: var(--color-black); }
 .setwiz__next:active { transform: translateY(1px); }
 .setwiz__next:focus-visible { outline: 2px solid var(--color-digital-black); outline-offset: 2px; }
-/* PRIMARY action (teal) at the bottom of each product step — the always-live set cart.
-   Qty stepper + CTA share the single-PDP .cfgb-buyrow row. */
-.setwiz__buy { margin-top: 0.85rem; }
+/* PRIMARY action (teal) — the always-live set cart. Qty stepper + CTA share the
+   single-PDP .cfgb-buyrow row; on product steps it lives inside the price card
+   (.setdt__sum), on the Übersicht it sits in the summary card. */
 .setbuy__row { align-items: stretch; }
 .setbuy__row.is-precolor .cfgb-buyrow__qty { display: none; }        /* no colour yet → CTA spans full width */
 .cfgb-buyrow .setsum__cta { flex: 1 1 auto; width: auto; height: 3rem; padding-top: 0; padding-bottom: 0; margin-top: 0; }
