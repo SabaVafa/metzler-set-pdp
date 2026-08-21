@@ -230,9 +230,10 @@
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
 /* price detail — matches the live product buy box: a configured-items card + a
    "Preis wie konfiguriert" summary + PayPal note, on a soft paper field. */
-.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0.7rem;
-  padding: 0.7rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-left: 0; border-right: 0; border-radius: 0; }
-.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: 0; padding: 1rem 1.1rem; }
+.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0;
+  padding: 0; background: none; border: 0; border-top: 1px solid var(--color-graphite-200); }
+.setdt__items, .setdt__sum { background: none; border: 0; border-radius: 0; padding: 1rem 1.45rem; }
+.setdt__items + .setdt__sum { border-top: 1px solid var(--color-graphite-200); }
 /* configured items — mirrors the single-product PDP's .sum-row list: one flat
    itemised list, uniform 0.8125rem, a hairline (graphite-100) between EVERY row,
    names in digital-black (bold for the product), prices bold + green "inklusive" */
@@ -535,6 +536,10 @@
    height; products are spaced with margins instead of flex gap */
 .setsum__items { display: block; padding-bottom: 1rem; border-bottom: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
 .setsum__prod + .setsum__prod { margin-top: 0.9rem; }
+/* full-width price breakdown (same as the product-step price detail): line items,
+   subtotal/discount and total break out to the card edges with full-width hairline
+   dividers; their content stays inset. Actions (CTA, buy row) remain inset. */
+.setsum__items, .setsum__rows, .setsum__total { margin-left: -1.45rem; margin-right: -1.45rem; padding-left: 1.45rem; padding-right: 1.45rem; }
 .setsum__item { display: flex; align-items: center; gap: 0.8rem; }
 .setsum__ithumb { flex: none; width: 2.9rem; height: 2.9rem; border-radius: var(--radius); overflow: hidden;
   background: var(--color-paper); border: 1px solid var(--color-graphite-200); display: grid; place-items: center; }
@@ -555,7 +560,7 @@
 .setsum__prod { display: block; }
 /* per-product "Ausstattung im Detail" = a minimal bordered BAR that, when open,
    shares one frame with its content (a self-contained accordion unit) */
-.setsum__acc { margin-top: 0.55rem; border: 1px solid var(--color-graphite-200); border-radius: var(--radius); overflow: hidden; }
+.setsum__acc { margin-top: 0.55rem; border: 1px solid var(--color-graphite-200); border-radius: 0; overflow: hidden; }
 .setsum__acctoggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
   padding: 0.6rem 0.85rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
 .setsum__acctoggle:hover { background: var(--color-graphite-100); }
@@ -607,6 +612,7 @@
 .setsum__trustitem b { color: var(--color-digital-black); font-weight: 700; }
 .setsum__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-green); flex: none; }
 .setsum__delivery { margin-top: 1rem; }
+.setsum__delivery.bx-delivery { border-radius: 0; }   /* squared, matching the config */
 .setsum__note { margin: 0.85rem 0 0; font-size: 0.6875rem; color: var(--color-graphite-500); text-align: center; }
 
 /* ---- colour side-window: inset hairline dividers between rows, matching the
