@@ -228,18 +228,14 @@
 /* price-details breakdown — always shown below the step nav */
 .setwiz__details { display: grid; grid-template-rows: 1fr; }
 .setwiz__detailsinner { overflow: hidden; min-height: 0; }
-/* price detail — matches the live product buy box: a configured-items card + a
-   "Preis wie konfiguriert" summary + PayPal note, on a soft paper field. */
-/* live approach: two white cards (line items + price summary) inset within a paper
-   panel that frames them on ALL sides — the paper reads as a panel, not the loose
-   horizontal grey strips it became when the cards spanned full-width. Full-width +
-   squared for the set page; the panel's sides are the card edge. */
-/* white cards on a grey panel: the paper (grey) panel sits underneath the two
-   white cards (line items + price summary), full-width to the card edges (its
-   side borders meet the card's own border). */
-.setdt { margin: 0.9rem -1.45rem 0; display: flex; flex-direction: column; gap: 0.85rem;
-  padding: 0.85rem 1.75rem; background: var(--color-paper); border: 1px solid var(--color-graphite-200); border-radius: 0; }
-.setdt__items, .setdt__sum { background: var(--color-white); border: 1px solid var(--color-graphite-200); border-radius: 0; padding: 1rem 1.1rem; }
+/* price detail — one surface, no nesting (Codex proposal). The configured-items
+   list and the "Preis wie konfiguriert" summary read as one flat ledger inside the
+   configurator card, separated only by hairlines — no grey panel, no nested cards,
+   no full-bleed breakout. */
+.setdt { margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0;
+  padding: 0; background: none; border: 0; border-top: 1px solid var(--color-graphite-200); border-radius: 0; }
+.setdt__items, .setdt__sum { background: none; border: 0; border-radius: 0; padding: 0.9rem 0; }
+.setdt__items + .setdt__sum { border-top: 1px solid var(--color-graphite-200); }
 /* configured items — mirrors the single-product PDP's .sum-row list: one flat
    itemised list, uniform 0.8125rem, a hairline (graphite-100) between EVERY row,
    names in digital-black (bold for the product), prices bold + green "inklusive" */
@@ -286,7 +282,7 @@
 .setwiz__buy { margin-top: 0.85rem; }
 .setbuy__row { align-items: stretch; }
 .setbuy__row.is-precolor .cfgb-buyrow__qty { display: none; }        /* no colour yet → CTA spans full width */
-.cfgb-buyrow .setsum__cta { flex: 1 1 auto; width: auto; height: 3.25rem; padding-top: 0; padding-bottom: 0; margin-top: 0; }
+.cfgb-buyrow .setsum__cta { flex: 1 1 auto; width: auto; height: 3rem; padding-top: 0; padding-bottom: 0; margin-top: 0; }
 /* back link above the Übersicht summary */
 /* the summary back link reads in the primary brand colour (teal #015253) */
 .setsum__back { margin-bottom: 0.85rem; color: var(--color-teal); }
@@ -542,10 +538,9 @@
    height; products are spaced with margins instead of flex gap */
 .setsum__items { display: block; padding-bottom: 1rem; border-bottom: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
 .setsum__prod + .setsum__prod { margin-top: 0.9rem; }
-/* full-width price breakdown (same as the product-step price detail): line items,
-   subtotal/discount and total break out to the card edges with full-width hairline
-   dividers; their content stays inset. Actions (CTA, buy row) remain inset. */
-.setsum__items, .setsum__rows, .setsum__total { margin-left: -1.45rem; margin-right: -1.45rem; padding-left: 1.45rem; padding-right: 1.45rem; }
+/* one surface, no nesting (Codex proposal): the breakdown stays in-card — no
+   full-bleed breakout — separated only by hairlines. */
+.setsum__items, .setsum__rows, .setsum__total { margin-inline: 0; padding-inline: 0; }
 .setsum__item { display: flex; align-items: center; gap: 0.8rem; }
 .setsum__ithumb { flex: none; width: 2.9rem; height: 2.9rem; border-radius: var(--radius); overflow: hidden;
   background: var(--color-paper); border: 1px solid var(--color-graphite-200); display: grid; place-items: center; }
@@ -566,9 +561,9 @@
 .setsum__prod { display: block; }
 /* per-product "Ausstattung im Detail" = a minimal bordered BAR that, when open,
    shares one frame with its content (a self-contained accordion unit) */
-.setsum__acc { margin: 0.55rem -1.45rem 0; border: 1px solid var(--color-graphite-200); border-left: 0; border-right: 0; border-radius: 0; overflow: hidden; }
+.setsum__acc { margin-top: 0.55rem; border: 1px solid var(--color-graphite-200); border-radius: 0; overflow: hidden; }
 .setsum__acctoggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
-  padding: 0.6rem 1.45rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
+  padding: 0.6rem 0.85rem; background: var(--color-paper); border: 0; cursor: pointer; font: inherit; font-size: 0.8125rem; font-weight: 700; color: var(--color-teal); text-align: left; transition: background .15s ease; }
 .setsum__acctoggle:hover { background: var(--color-graphite-100); }
 .setsum__acctoggle:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
 .setsum__acctoggle svg { flex: none; width: 1rem; height: 1rem; transition: transform .2s ease; }
@@ -582,7 +577,7 @@
 .setsum__accbody { overflow: hidden; height: 0; transition: height .28s ease; }
 .setsum__acc.is-open .setsum__accbody { height: auto; }
 .setsum__accbody .setdt__items { border: 0; background: none;
-  padding: 0.5rem 1.45rem 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
+  padding: 0.5rem 0.85rem 0.65rem; border-top: 1px solid var(--color-graphite-150, var(--color-graphite-200)); }
 
 .setsum__rows { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 0; }
 .setsum__row { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.875rem; color: var(--color-graphite-700); font-variant-numeric: tabular-nums; }
@@ -605,7 +600,7 @@
 /* primary CTA = design-system .btn--primary.btn--lg: height-based sizing, weight
    500, 4px radius, no shadow, teal-600/700 states (identical to the gate CTA) */
 .setsum__cta { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem;
-  height: 3.25rem; padding: 0 2rem; background: var(--color-teal); color: #fff; border: 0; border-radius: var(--radius);
+  height: 3rem; padding: 0 2rem; background: var(--color-teal); color: #fff; border: 0; border-radius: var(--radius);
   font: inherit; font-size: 1.0625rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background .14s, color .14s; }
 .setsum__cta svg { width: 1.15rem; height: 1.15rem; }
 .setsum__cta.is-ready:hover { background: var(--color-teal-600); }
