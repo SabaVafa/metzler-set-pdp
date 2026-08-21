@@ -63,6 +63,16 @@
   var clamp = function (n, lo, hi) { return Math.max(lo, Math.min(hi, n)); };
   /* respect prefers-reduced-motion for programmatic scrolling (WCAG 2.3.3) */
   var scrollBehavior = function () { return (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth'; };
+  /* height of the pinned bars above the configurator: site header + .quickbar while
+     it is sticky (it turns `relative` and scrolls away on narrow layouts). Every
+     scroll-to offset and the dock's own sticky top derive from this so nothing lands
+     behind the stack. */
+  function stickyStackHeight() {
+    var header = document.querySelector('.header'), quickbar = document.querySelector('.quickbar');
+    var h = header ? Math.round(header.getBoundingClientRect().height) : 88;
+    if (quickbar && getComputedStyle(quickbar).position === 'sticky') h += Math.round(quickbar.getBoundingClientRect().height);
+    return h;
+  }
   var eur = function (n) { return n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
   var swatchStyle = function (f) { return f.img ? "background-image:url('" + f.img + "')" : 'background:' + (f.chip || '#ccc'); };
@@ -313,8 +323,8 @@
     var head = nextItem.querySelector('.stepr__head') || nextItem, done = false;
     var run = function () {
       if (done) return; done = true;
-      var header = document.querySelector('.header'), dock = document.getElementById('setSteps');
-      var off = (header ? header.getBoundingClientRect().height : 0) + (dock ? dock.getBoundingClientRect().height : 0) + 14;
+      var dock = document.getElementById('setSteps');
+      var off = stickyStackHeight() + (dock ? dock.getBoundingClientRect().height : 0) + 14;
       window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: scrollBehavior() });
     };
     var body = prevItem && prevItem.querySelector('.stepr__body');
@@ -565,9 +575,11 @@
     ['prodA', 'prodB', 'setsum'].forEach(function (sid) { var n = document.getElementById(sid); if (n) n.hidden = (sid !== id); });
     paintSteps();
     if (scroll) {
-      var wiz = document.querySelector('.setwiz'), header = document.querySelector('.header');
+      var wiz = document.querySelector('.setwiz');
       if (wiz) {
-        var offset = (header ? Math.round(header.getBoundingClientRect().height) : 65) + 10;
+        /* land the card's top (the sticky dock) just below the pinned bars, so the
+           dock shows flush and the first step below it isn't tucked under the dock. */
+        var offset = stickyStackHeight() + 10;
         window.scrollTo({ top: Math.max(0, wiz.getBoundingClientRect().top + window.scrollY - offset), behavior: scrollBehavior() });
       }
     }
@@ -658,8 +670,8 @@
       item.classList.remove('is-flash'); void item.offsetWidth; item.classList.add('is-flash');
       setTimeout(function () { item.classList.remove('is-flash'); }, 700);
       var head = item.querySelector('.stepr__head') || item;
-      var header = document.querySelector('.header'), dock = document.getElementById('setSteps');
-      var off = (header ? header.getBoundingClientRect().height : 0) + (dock ? dock.getBoundingClientRect().height : 0) + 14;
+      var dock = document.getElementById('setSteps');
+      var off = stickyStackHeight() + (dock ? dock.getBoundingClientRect().height : 0) + 14;
       window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + window.scrollY - off), behavior: scrollBehavior() });
     };
     setTimeout(run, switching ? 80 : 0);
@@ -694,14 +706,28 @@
   function setupStickyDock() {
     var dock = document.getElementById('setSteps'), header = document.querySelector('.header'), wiz = document.querySelector('.setwiz');
     if (!dock || !wiz) return;
+    /* The dock must pin below the WHOLE sticky top stack (header + .quickbar), not
+       just the header: the quickbar (z 45 ≫ dock z 5) pins directly under the header
+       on wider viewports and would otherwise cover the progress ribbon. That stack
+       height is stickyStackHeight(); it only counts the quickbar while it is sticky. */
+    var quickbar = document.querySelector('.quickbar');
     var update = function () {
-      var h = header ? Math.round(header.getBoundingClientRect().height) : 88;
+      var h = stickyStackHeight();
       document.documentElement.style.setProperty('--set-dock-top', h + 'px');
       var top = dock.getBoundingClientRect().top;
       dock.classList.toggle('is-pinned', Math.abs(top - h) <= 1.5 && wiz.getBoundingClientRect().bottom > h + dock.offsetHeight);
     };
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });
+    /* The header carries `transition: all` and can grow after first layout
+       (fonts/images) or shrink on scroll, so a scroll/resize-only measure leaves
+       --set-dock-top stale or caught mid-animation; the quickbar likewise changes
+       height/stickiness across breakpoints. Re-measure whenever either settles. */
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(update);
+      if (header) ro.observe(header);
+      if (quickbar) ro.observe(quickbar);
+    }
     update();
   }
 
@@ -734,12 +760,40 @@
   var lockCta = document.getElementById('setwizLockCta'); if (lockCta) lockCta.addEventListener('click', promptColor);
   /* "Ausstattung im Detail" disclosure in the summary (delegated: #setsum persists
      across re-renders, only its innerHTML changes). */
+  /* smoothly animate the disclosure body between height 0 and its content height.
+     We drive an explicit pixel height (0 ⇄ scrollHeight) rather than transitioning
+     to height:auto / grid 1fr — intrinsic-size targets don't animate reliably across
+     engines. On transitionend the open body is released to height:auto so later
+     content/reflow isn't clipped; the closed body stays at CSS height:0. */
+  function animateDisclosure(body, open, start) {
+    if (!body) return;
+    if (body._discloseDone) {                      /* cancel a still-pending finalizer (rapid re-toggle) */
+      body.removeEventListener('transitionend', body._discloseDone); body._discloseDone = null;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      body.style.height = open ? 'auto' : '0px'; return;
+    }
+    body.style.height = start + 'px';             /* pin the pre-toggle height */
+    void body.offsetHeight;                       /* commit it as the transition start */
+    body.style.height = (open ? body.scrollHeight : 0) + 'px';
+    var done = function (ev) {
+      if (ev.target !== body || ev.propertyName !== 'height') return;
+      body.removeEventListener('transitionend', done); body._discloseDone = null;
+      body.style.height = open ? 'auto' : '';     /* open → release to content; closed → CSS 0 */
+    };
+    body._discloseDone = done;
+    body.addEventListener('transitionend', done);
+  }
   var setsumEl = document.getElementById('setsum');
   if (setsumEl) setsumEl.addEventListener('click', function (e) {
     var t = e.target.closest('.setsum__acctoggle'); if (!t) return;
     var k = t.getAttribute('data-prod'); if (!k) return;
-    sumDetailsOpen[k] = !sumDetailsOpen[k];
-    t.setAttribute('aria-expanded', sumDetailsOpen[k] ? 'true' : 'false');
-    var acc = t.closest('.setsum__acc'); if (acc) acc.classList.toggle('is-open', sumDetailsOpen[k]);
+    var open = sumDetailsOpen[k] = !sumDetailsOpen[k];
+    t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var acc = t.closest('.setsum__acc'); if (!acc) return;
+    var body = acc.querySelector('.setsum__accbody');
+    var start = body ? body.getBoundingClientRect().height : 0;  /* measure before the class flips height:auto */
+    acc.classList.toggle('is-open', open);
+    animateDisclosure(body, open, start);
   });
 })();
